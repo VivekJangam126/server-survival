@@ -1,157 +1,132 @@
-# Server Survival
+# Cloud Learning Simulator
 
 ![Gameplay Demo](assets/gameplay.gif)
 
-**Server Survival** is an interactive 3D simulation game where you play as a **Cloud Architect**. Your mission is to build and scale a resilient cloud infrastructure to handle increasing traffic loads while fighting off DDoS attacks, managing your budget, and keeping your services healthy.
+**Cloud Learning Simulator** is an interactive 3D educational platform that transforms the original Server Survival game into a comprehensive cloud computing learning experience. Built with a modular architecture, it features multiple learning modes, progress tracking, and professional navigation systems.
 
-[![PLAY NOW](https://img.shields.io/badge/PLAY_NOW-Server_Survival-2ea44f?style=for-the-badge)](https://pshenok.github.io/server-survival/)
+[![PLAY NOW](https://img.shields.io/badge/PLAY_NOW-Cloud_Learning_Simulator-2ea44f?style=for-the-badge)](index.html)
 
-## How to Play
+## Features
 
-### Objective
+### 🎮 Multiple Learning Modes
 
-Survive as long as possible! Manage your **Budget ($)**, **Reputation (%)**, and **Service Health**.
+#### **Play Mode**
+- **Survival Mode**: Original Server Survival gameplay with educational context
+- **Challenge Mode**: Focused 3-5 minute scenarios targeting specific cloud concepts
+- **Sandbox Mode**: Free experimentation with AI assistant guidance
 
-- **Earn Money** by successfully processing legitimate traffic requests.
-- **Lose Reputation** if requests fail or if malicious traffic slips through.
-- **Maintain Health** - Services degrade under load and need repairs.
-- **Game Over** if Reputation hits 0% or you go bankrupt ($-1000).
+#### **Learn Mode**
+- **Interactive Tutorials**: Step-by-step guided learning with progress tracking
+- **Concept Explorer**: Deep dive into cloud computing fundamentals
+- **Video Library**: Curated educational content with integrated learning paths
 
-### Traffic Types
+#### **Analysis Mode**
+- **Performance Analytics**: Track your learning progress and skill development
+- **Detailed Reports**: Comprehensive analysis of your strengths and areas for improvement
+- **AI-Powered Insights**: Personalized recommendations for optimal learning
 
-| Traffic       | Color  | Destination | Reward | Description                            |
-| :------------ | :----- | :---------- | :----- | :------------------------------------- |
-| **STATIC**    | Green  | CDN / Storage | $0.50  | Static file requests (images, CSS, JS) |
-| **READ**      | Blue   | SQL DB      | $0.80  | Database read operations               |
+#### **Profile Mode**
+- **Comprehensive Settings**: Audio, gameplay, privacy, and language preferences
+- **Achievement System**: Unlock badges and track learning milestones
+- **Progress Visualization**: Visual representation of your learning journey
 
-### Infrastructure & Services
+### 🏗️ Modern Architecture
 
-Build your architecture using the toolbar. Each service has a cost, capacity, and upkeep:
+- **Modular Design**: Clean separation of concerns with ES6 modules
+- **Event-Driven**: Loose coupling between components for scalability
+- **State Management**: Centralized state with persistence and real-time updates
+- **Responsive UI**: Professional interface that works on all devices
 
-| Service      | Cost | Capacity  | Upkeep    | Function                                                           |
-| :----------- | :--- | :-------- | :-------- | :----------------------------------------------------------------- |
-| **Firewall** | $40  | 30        | Low       | **Security.** First line of defense. Blocks malicious traffic.     |
-| **Queue**    | $40  | Queue:200 | Low       | **Buffer.** Buffers requests during spikes. Prevents drops.        |
-| **Load Balancer**| $50  | 20        | Medium    | **Distribution.** Distributes traffic to multiple instances.      |
-| **Compute**  | $60  | 4         | High      | **Processing.** Processes requests. **Upgradeable T1→T3.**         |
-| **CDN**      | $60  | 50        | Low       | **Delivery.** Caches STATIC content at edge (95% hit rate).        |
-| **Cache**    | $60  | 30        | Medium    | **Caching.** Caches responses to reduce DB load.                   |
-| **SQL DB**   | $150 | 8         | Very High | **Database.** Destination for READ/WRITE/SEARCH. **Upgradeable T1→T3.** |
-| **Storage**  | $25  | 25        | Low       | **File System.** Destination for STATIC/UPLOAD traffic.            |
+### 🎨 Professional User Experience
 
-### Scoring & Economy
+- **Smooth Navigation**: Instant mode switching without page reloads
+- **Loading States**: Professional transitions with progress indicators
+- **Dark Theme**: Modern glassmorphism design with blue accents
+- **Shared Navigation**: Consistent navbar across all application modes
 
-| Action         | Money  | Score | Reputation |
-| :------------- | :----- | :---- | :--------- |
-| Static Request | +$0.50 | +3    | +0.1       |
-| DB Read        | +$0.80 | +5    | +0.1       |
-| DB Write       | +$1.20 | +8    | +0.1       |
-| File Upload    | +$1.50 | +10   | +0.1       |
-| Search Query   | +$0.80 | +5    | +0.1       |
-| Attack Blocked | +$0.50 | +10   | -          |
-| Request Failed | -      | -half | -1         |
-| Attack Leaked  | -      | -     | -5         |
+## How to Use
 
-### Upkeep & Cost Scaling
+### Getting Started
 
-- **Base Upkeep:** Each service has per-minute upkeep costs
-- **Upkeep Scaling:** Costs increase 1x to 2x over 10 minutes
-- **Repair Costs:** 15% of service cost to manually repair
-- **Auto-Repair:** +10% upkeep overhead when enabled
+1. **Landing Page**: Start at `index.html` for an overview of features
+2. **Dashboard**: Navigate to `dashboard.html` for your learning hub
+3. **Play**: Access `play.html` for the interactive 3D simulation
+4. **Learn**: Visit `learn.html` for tutorials and educational content
+5. **Analysis**: Check `analysis.html` for performance insights
+6. **Profile**: Manage settings at `profile.html`
 
-### Game Modes
+### Navigation
 
-#### Survival Mode
-
-The core experience - survive as long as possible against escalating traffic with constant intervention required:
-
-**Dynamic Challenges:**
-
-- **RPS Acceleration** - Traffic multiplies at time milestones (×1.3 at 1min → ×4.0 at 10min)
-- **Random Events** - Cost spikes, capacity drops, traffic bursts every 15-45 seconds
-- **Traffic Shifts** - Traffic patterns change every 40 seconds
-- **DDoS Spikes** - 50% malicious traffic waves every 45 seconds
-- **Service Degradation** - Services lose health under load, require repairs
-
-**New UI Features:**
-
-- **Health bars on all services**
-- **Active event indicator bar at top**
-- **Detailed finances panel (income/expenses breakdown)**
-- **Service health panel with repair costs**
-- **Auto-repair toggle**
-- **Game over analysis with tips**
-
-#### Sandbox Mode
-
-A fully customizable testing environment for experimenting with any architecture:
-
-| Control           | Description                                                       |
-| :---------------- | :---------------------------------------------------------------- |
-| **Budget**        | Set any starting budget (slider 0-10K, or type any amount)        |
-| **RPS**           | Control traffic rate (0 = stopped, or type 100+ for stress tests) |
-| **Traffic Mix**   | Adjust all 6 traffic type percentages independently               |
-| **Burst**         | Spawn instant bursts of specific traffic types                    |
-| **Upkeep Toggle** | Enable/disable service costs                                      |
-| **Clear All**     | Reset all services and restore budget                             |
-
-**No game over in Sandbox** - experiment freely!
-
-### Recent Features (v2.1)
-
-- **Constant Intervention Mechanics** - Game requires active management throughout
-- **Service Health System** - Visual health bars, manual/auto repair options
-- **RPS Milestones** - Traffic surge warnings with multiplier display
-- **Active Event Bar** - Shows current random event with countdown timer
-- **Detailed Finances** - Income by request type, expenses by service with counts
-- **Game Over Analysis** - Failure reason, description, and contextual tips
-- **Retry Same Setup** - Restart with same architecture after game over
-- **Interactive Tutorial** - Guided walkthrough for new players
-
-### Controls
-
-- **Left Click:** Select tools, place services, and connect nodes.
-- **Right Click + Drag:** Pan the camera.
-- **Scroll:** Zoom in and out.
-- **WASD / Arrows:** Move camera (pan) when zoomed in.
-- **ESC:** Open main menu and pause game. Press again or click Resume to close menu (stays paused).
-- **Camera Reset:** Press `R` to reset the camera position.
-- **Birds-Eye View:** Press `T` to switch between isometric and top-down view.
-- **Hide HUD:** Press `H` to toggle UI panels.
-- **Connect Tool:** Click two nodes to create a connection (flow direction matters!).
-  - _Valid Flows:_ Internet -> (Firewall/CDN) -> Load Balancer -> Queue -> Compute -> Cache -> (SQL DB/Storage)
-- **Delete Tool:** Remove services to recover 50% of the cost.
-- **Time Controls:** Pause, Play (1x), and Fast Forward (3x).
-
-## Strategy Tips
-
-1.  **Block Attacks First:** Always place a Firewall immediately connected to the Internet. Malicious leaks destroy reputation fast (-5 per leak).
-2.  **Use CDN for Static Content:** Connect Internet -> CDN -> Storage. The CDN handles 95% of static traffic cheaply!
-3.  **Watch Service Health:** Damaged services have reduced capacity. Click to repair or enable Auto-Repair.
-4.  **Scale for Traffic Surges:** RPS multiplies at milestones - prepare before ×2.0 at 3 minutes!
-5.  **Balance Income vs Upkeep:** Start lean, scale as income grows. Over-provisioning leads to bankruptcy.
-6.  **Use Cache Wisely:** Reduces database load significantly for READ requests.
-7.  **Buffer with Queue:** Queue helps survive traffic burst events without dropping requests.
-8.  **React to Events:** Watch the event bar - cost spikes mean hold off on purchases, traffic bursts mean ensure capacity.
+- **Shared Navbar**: Available on all pages for seamless navigation
+- **Mode Controllers**: Each section has specialized functionality and submodes
+- **State Preservation**: Your progress and settings are maintained across sessions
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
 
 ## Tech Stack
 
-- **Core:** Vanilla JavaScript (ES6+)
-- **Rendering:** [Three.js](https://threejs.org/) for 3D visualization.
-- **Styling:** [Tailwind CSS](https://tailwindcss.com/) for the glassmorphism UI.
-- **Build:** No build step required! Just standard HTML/CSS/JS.
+- **Core:** Vanilla JavaScript (ES6+) with modular architecture
+- **Rendering:** [Three.js](https://threejs.org/) for 3D visualization
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) for modern UI components
+- **Architecture:** Event-driven design with centralized state management
+- **Build:** No build step required! Standard HTML/CSS/JS modules
+
+## Project Structure
+
+```
+├── index.html              # Professional landing page
+├── dashboard.html          # Learning hub and user stats
+├── play.html              # Interactive 3D simulation
+├── learn.html             # Tutorials and educational content
+├── analysis.html          # Performance analytics
+├── profile.html           # Settings and achievements
+├── shared/                # Shared navigation components
+│   ├── navbar.html
+│   └── navbar.js
+├── src/                   # Modular application code
+│   ├── core/             # Core system modules
+│   ├── controllers/      # Mode-specific controllers
+│   ├── ui/              # UI components and integration
+│   ├── entities/        # Data models
+│   ├── services/        # Service layer
+│   └── locales/         # Internationalization
+├── assets/              # Media and static files
+└── game.js             # Original game logic (preserved)
+```
 
 ## Getting Started
 
-1.  Clone the repository.
-2.  Open `index.html` in your modern web browser.
-3.  Start building your cloud empire!
+1. Clone the repository
+2. Open `index.html` in your modern web browser
+3. Navigate through the different learning modes
+4. Start your cloud computing learning journey!
+
+## Development
+
+The application uses a modular architecture with ES6 modules:
+
+- **ApplicationController**: Main application coordinator
+- **ModeControllerManager**: Manages navigation between different modes
+- **StateManager**: Centralized state management with persistence
+- **EventSystem**: Event-driven communication between components
+- **Router**: Client-side routing for seamless navigation
+
+## Phase 2 Complete
+
+This version represents the completion of Phase 2: Dashboard and Navigation System, featuring:
+
+- ✅ Complete navigation system with smooth transitions
+- ✅ Professional dashboard with user statistics
+- ✅ Mode controllers for all major sections
+- ✅ Comprehensive testing and validation
+- ✅ Modern UI/UX with responsive design
+
+For detailed implementation notes, see `PHASE2_COMPLETE.md`.
 
 ## Community
 
-Join our Discord server to discuss strategies and share your high scores:
+Join our Discord server to discuss learning strategies and share your progress:
 [Join Discord](https://discord.gg/f38NgHDwnK)
 
 ---
 
-_Built with code and chaos._
+_Transforming cloud learning through interactive simulation._

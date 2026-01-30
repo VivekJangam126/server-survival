@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn - Cloud Learning Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Shared navbar will be loaded here -->
+    
+    <div class="max-w-4xl mx-auto p-8" style="padding-top: 80px;">
+        <h1 class="text-4xl font-bold mb-4">Learn Mode</h1>
+        <div class="bg-gray-800 p-8 rounded-lg text-center">
+            <div class="text-6xl mb-4">🚧</div>
+            <h2 class="text-2xl font-bold mb-4">Coming Soon!</h2>
+            <p class="text-gray-400 mb-6">
+                The Learn Mode is currently under development. This will include:
+            </p>
+            <ul class="text-left text-gray-300 space-y-2 mb-6">
+                <li>• Interactive tutorials</li>
+                <li>• Step-by-step cloud computing lessons</li>
+                <li>• Hands-on exercises</li>
+                <li>• Progress tracking</li>
+                <li>• Multimedia content</li>
+            </ul>
+            <button onclick="window.location.href='dashboard.html'" 
+                class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg font-bold">
+                Return to Dashboard
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Load shared navbar
+        async function loadSharedNavbar() {
+            try {
+                const script = document.createElement('script');
+                script.src = 'shared/navbar.js';
+                document.head.appendChild(script);
+                
+                await new Promise((resolve) => {
+                    script.onload = resolve;
+                });
+                
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                console.log('Shared navbar loaded for learn page');
+            } catch (error) {
+                console.error('Failed to load shared navbar:', error);
+            }
+        }
+
+        // Initialize
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadSharedNavbar);
+        } else {
+            loadSharedNavbar();
+        }
+    </script>
+</body>
+</html>
