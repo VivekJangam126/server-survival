@@ -34,6 +34,13 @@
             padding-top: 80px;
             min-height: 100vh;
         }
+
+        /* Custom scrollbar for modern browsers */
+        ::-webkit-scrollbar { width: 12px; height: 12px; }
+        ::-webkit-scrollbar-track { background: rgba(15,23,42,0.6); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#06b6d4,#7c3aed); border-radius: 8px; border: 3px solid rgba(0,0,0,0); background-clip: padding-box; }
+        /* Firefox */
+        html { scrollbar-width: thin; scrollbar-color: #06b6d4 rgba(15,23,42,0.6); }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
@@ -110,182 +117,39 @@
         </div>
     </main>
 
-    <!-- Dashboard Bootstrap Script -->
-    <script>
-        // Static dashboard data
-        const dashboardData = {
-            stats: [
-                { title: 'Current Level', value: 8, icon: '🎯', color: 'text-blue-400' },
-                { title: 'Challenges Completed', value: 24, icon: '🏆', color: 'text-green-400' },
-                { title: 'Tutorials Finished', value: 18, icon: '📚', color: 'text-purple-400' },
-                { title: 'Achievements', value: 12, icon: '⭐', color: 'text-yellow-400' }
-            ],
-            activities: [
-                {
-                    icon: '🏅',
-                    title: 'Earned Achievement: Mentor',
-                    description: 'Helped 10 other learners',
-                    time: '15 min ago',
-                    points: 100
-                },
-                {
-                    icon: '💰',
-                    title: 'Completed Challenge: Cost Analysis',
-                    description: 'Optimized cloud costs by 35%',
-                    time: '30 min ago',
-                    points: 75
-                },
-                {
-                    icon: '📚',
-                    title: 'Completed Tutorial: Cost Optimization',
-                    description: 'Learned advanced cost management',
-                    time: '1 hour ago',
-                    points: 50
-                },
-                {
-                    icon: '🎯',
-                    title: 'New High Score: 3,250 points',
-                    description: 'Survived 30 minutes in hard mode',
-                    time: '2 hours ago',
-                    points: 125
-                }
-            ],
-            recommendations: [
-                {
-                    title: 'Try Infrastructure Challenges',
-                    description: 'Test your skills with hands-on scenarios',
-                    priority: 'MEDIUM',
-                    priorityColor: 'bg-yellow-600'
-                },
-                {
-                    title: 'Explore Sandbox Mode',
-                    description: 'Experiment freely with cloud components',
-                    priority: 'LOW',
-                    priorityColor: 'bg-gray-600'
-                },
-                {
-                    title: 'Advanced Security Course',
-                    description: 'Master cloud security best practices',
-                    priority: 'HIGH',
-                    priorityColor: 'bg-red-600'
-                }
-            ],
-            progress: [
-                { skill: 'Infrastructure', percentage: 85, color: 'bg-blue-500' },
-                { skill: 'Security', percentage: 72, color: 'bg-green-500' },
-                { skill: 'Networking', percentage: 90, color: 'bg-purple-500' },
-                { skill: 'Databases', percentage: 68, color: 'bg-yellow-500' }
-            ],
-            quickActions: [
-                {
-                    title: 'Start Survival',
-                    description: 'Begin survival mode',
-                    icon: '⚡',
-                    color: 'bg-green-600 hover:bg-green-500',
-                    action: 'startSurvival'
-                },
-                {
-                    title: 'Sandbox Mode',
-                    description: 'Free exploration',
-                    icon: '🛠️',
-                    color: 'bg-purple-600 hover:bg-purple-500',
-                    action: 'startSandbox'
-                },
-                {
-                    title: 'Learn',
-                    description: 'Tutorials & guides',
-                    icon: '📚',
-                    color: 'bg-blue-600 hover:bg-blue-500',
-                    action: 'openLearn'
-                },
-                {
-                    title: 'Achievements',
-                    description: 'View progress',
-                    icon: '🏆',
-                    color: 'bg-yellow-600 hover:bg-yellow-500',
-                    action: 'openAchievements'
-                }
-            ]
-        };
+    <!-- Dashboard Bootstrap Script (module-based) -->
+    <script type="module">
+        import { populateAll, openPlayModal, startSurvival, startSandbox, resumeLast } from './src/Dashboard.js';
 
-        // Populate dashboard with static data
-        function populateDashboard() {
-            // Populate stats grid
-            const statsGrid = document.getElementById('stats-grid');
-            statsGrid.innerHTML = dashboardData.stats.map(stat => `
-                <div class="glass-panel p-6 rounded-xl">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-gray-400 text-sm">${stat.title}</p>
-                            <p class="text-3xl font-bold text-white">${stat.value}</p>
-                        </div>
-                        <div class="text-4xl ${stat.color}">${stat.icon}</div>
-                    </div>
-                </div>
-            `).join('');
+        // Expose handlers globally so inline `onclick` attributes still work
+        window.openPlayModal = openPlayModal;
+        window.startSurvival = startSurvival;
+        window.startSandbox = startSandbox;
+        window.resumeLast = resumeLast;
+        window.openLearn = () => alert('Learn mode coming soon!');
+        window.openAchievements = () => alert('Achievements view coming soon!');
 
-            // Populate recent activities
-            const activitiesContainer = document.getElementById('recent-activities');
-            activitiesContainer.innerHTML = dashboardData.activities.map(activity => `
-                <div class="flex items-center space-x-4 p-4 bg-gray-800/50 rounded-lg">
-                    <div class="text-2xl">${activity.icon}</div>
-                    <div class="flex-1">
-                        <p class="text-white font-medium">${activity.title}</p>
-                        <p class="text-gray-400 text-sm">${activity.description} • ${activity.time}</p>
-                    </div>
-                    <div class="text-green-400 font-bold">+${activity.points} XP</div>
-                </div>
-            `).join('');
-
-            // Populate recommendations
-            const recommendationsContainer = document.getElementById('recommendations');
-            recommendationsContainer.innerHTML = dashboardData.recommendations.map(rec => `
-                <div class="p-4 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-blue-500 transition cursor-pointer">
-                    <h3 class="font-semibold text-white mb-1">${rec.title}</h3>
-                    <p class="text-gray-400 text-sm mb-2">${rec.description}</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs px-2 py-1 rounded ${rec.priorityColor} text-white">${rec.priority}</span>
-                        <span class="text-blue-400">→</span>
-                    </div>
-                </div>
-            `).join('');
-
-            // Populate learning progress
-            const progressContainer = document.getElementById('learning-progress');
-            progressContainer.innerHTML = dashboardData.progress.map(skill => `
-                <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="text-gray-300">${skill.skill}</span>
-                        <span class="text-blue-400">${skill.percentage}%</span>
-                    </div>
-                    <div class="w-full bg-gray-700 rounded-full h-2">
-                        <div class="${skill.color} h-2 rounded-full" style="width: ${skill.percentage}%"></div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Populate quick actions
-            const quickActionsContainer = document.getElementById('quick-actions');
-            quickActionsContainer.innerHTML = dashboardData.quickActions.map(action => `
-                <button onclick="${action.action}()" class="quick-action-btn ${action.color} text-white font-bold py-6 px-4 rounded-lg shadow-lg transform transition hover:scale-105">
-                    <div class="text-3xl mb-2">${action.icon}</div>
-                    <div class="text-lg font-bold">${action.title}</div>
-                    <div class="text-sm opacity-80">${action.description}</div>
-                </button>
-            `).join('');
+        async function loadSharedNavbar() {
+            try {
+                const script = document.createElement('script');
+                script.src = 'shared/navbar.js';
+                document.head.appendChild(script);
+                await new Promise(resolve => { script.onload = resolve; });
+                await new Promise(resolve => setTimeout(resolve, 100));
+                console.log('Shared navbar loaded for dashboard');
+            } catch (err) {
+                console.error('Failed to load shared navbar:', err);
+            }
         }
 
-        // Initialize dashboard
         function initializeDashboard() {
             const progressBar = document.getElementById('loading-progress');
             const statusText = document.getElementById('loading-status');
-
-            // Simulate loading
             let progress = 0;
             const loadingInterval = setInterval(() => {
                 progress += 20;
-                progressBar.style.width = `${progress}%`;
-                
+                if (progressBar) progressBar.style.width = `${progress}%`;
+
                 if (progress === 20) statusText.textContent = 'Loading dashboard data...';
                 else if (progress === 40) statusText.textContent = 'Setting up components...';
                 else if (progress === 60) statusText.textContent = 'Rendering interface...';
@@ -293,77 +157,50 @@
                 else if (progress >= 100) {
                     statusText.textContent = 'Ready!';
                     clearInterval(loadingInterval);
-                    
-                    // Populate dashboard
-                    populateDashboard();
-                    
-                    // Hide loading screen
+                    // Populate UI
+                    populateAll();
                     setTimeout(() => {
-                        document.getElementById('loading-screen').classList.add('hidden');
+                        const ls = document.getElementById('loading-screen');
+                        if (ls) ls.classList.add('hidden');
                     }, 500);
                 }
             }, 200);
         }
 
-        // Navigation functions (removed - now handled by shared navbar)
-        // Mobile menu toggle (removed - now handled by shared navbar)
-
-        // Quick action functions
-        window.startSurvival = function() {
-            console.log('Starting survival mode...');
-            window.location.href = 'play.html';
-        };
-
-        window.startSandbox = function() {
-            console.log('Starting sandbox mode...');
-            window.location.href = 'play.html';
-        };
-
-        window.openLearn = function() {
-            console.log('Opening learn mode...');
-            alert('Learn mode coming soon!');
-        };
-
-        window.openAchievements = function() {
-            console.log('Opening achievements...');
-            alert('Achievements view coming soon!');
-        };
-
-        // Start initialization when DOM is ready
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => {
-                // Load shared navbar first
-                loadSharedNavbar().then(() => {
-                    initializeDashboard();
-                });
+                loadSharedNavbar().then(() => initializeDashboard());
             });
         } else {
-            // Load shared navbar first
-            loadSharedNavbar().then(() => {
-                initializeDashboard();
-            });
+            loadSharedNavbar().then(() => initializeDashboard());
         }
+    </script>
+    <!-- Play Type Modal -->
+    <div id="play-type-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div class="glass-panel p-6 rounded-xl max-w-md w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Choose Play Mode</h3>
+                <button onclick="closePlayModal()" class="text-gray-400 hover:text-white">✕</button>
+            </div>
 
-        // Load shared navbar
-        async function loadSharedNavbar() {
-            try {
-                // Load the shared navbar script
-                const script = document.createElement('script');
-                script.src = 'shared/navbar.js';
-                document.head.appendChild(script);
-                
-                // Wait for script to load
-                await new Promise((resolve) => {
-                    script.onload = resolve;
-                });
-                
-                // Wait a bit for the navbar to initialize
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                console.log('Shared navbar loaded for dashboard');
-            } catch (error) {
-                console.error('Failed to load shared navbar:', error);
-            }
+            <div class="grid gap-3">
+                <button onclick="startSurvival()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg">▶ Start Survival</button>
+                <button onclick="startSandbox()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-lg">🛠 Start Sandbox</button>
+                <button onclick="resumeLast()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg">⏯ Resume Last Session</button>
+                <button onclick="closePlayModal()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-lg">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPlayModal(){
+            document.getElementById('play-type-modal').classList.remove('hidden');
+        }
+        function closePlayModal(){
+            document.getElementById('play-type-modal').classList.add('hidden');
+        }
+        function resumeLast(){
+            window.location.href = 'play.html?resume=1';
         }
     </script>
 </body>
