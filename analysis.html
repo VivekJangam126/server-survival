@@ -95,17 +95,23 @@
         </div>
     </div>
 
-    <!-- Scripts - Load in proper order -->
-    <script src="analytics/ProgressAnalyzer.js"></script>
-    <script src="analytics/ProgressSummaryBuilder.js"></script>
-    <script src="analysis/components/OverviewCards.js"></script>
-    <script src="analysis/components/RecentProgress.js"></script>
-    <script src="analysis/components/TrendsPanel.js"></script>
-    <script src="analysis/components/LearningInsight.js"></script>
-    <script src="analysis/AnalysisPageController.js"></script>
-
-    <!-- Load shared navbar -->
     <script>
+        // Global variables to track loading
+        let componentsLoaded = 0;
+        const totalComponents = 7;
+        
+        // Component loading tracker
+        function componentLoaded(name) {
+            componentsLoaded++;
+            console.log(`Loaded ${name} (${componentsLoaded}/${totalComponents})`);
+            
+            if (componentsLoaded === totalComponents) {
+                console.log('All components loaded, initializing...');
+                initializeAnalysisPage();
+            }
+        }
+
+        // Load shared navbar
         async function loadSharedNavbar() {
             try {
                 const response = await fetch('shared/navbar.html');
@@ -121,55 +127,87 @@
             }
         }
 
-        // Initialize page with better error handling
+        // Initialize the analysis page
+        function initializeAnalysisPage() {
+            console.log('Initializing analysis page...');
+            
+            // Check if all components are available
+            const components = {
+                ProgressAnalyzer: window.ProgressAnalyzer,
+                getProgressSummary: window.getProgressSummary,
+                OverviewCards: window.OverviewCards,
+                RecentProgress: window.RecentProgress,
+                TrendsPanel: window.TrendsPanel,
+                LearningInsight: window.LearningInsight,
+                AnalysisPageController: window.AnalysisPageController
+            };
+
+            const missing = Object.keys(components).filter(name => typeof components[name] === 'undefined');
+            
+            if (missing.length > 0) {
+                console.error('Missing components:', missing);
+                showError(`Missing components: ${missing.join(', ')}`);
+                return;
+            }
+
+            // Initialize the controller
+            if (window.AnalysisPageController && typeof window.AnalysisPageController.init === 'function') {
+                try {
+                    window.AnalysisPageController.init();
+                    console.log('Analysis page initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing analysis page:', error);
+                    showError(`Initialization error: ${error.message}`);
+                }
+            } else {
+                console.error('AnalysisPageController not available');
+                showError('AnalysisPageController not available');
+            }
+        }
+
+        // Show error state
+        function showError(message) {
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('empty-state').classList.remove('hidden');
+            document.getElementById('empty-state').innerHTML = `
+                <div class="glass-panel rounded-xl p-8 max-w-md mx-auto">
+                    <div class="text-6xl mb-4">⚠️</div>
+                    <h3 class="text-xl font-bold mb-2">Loading Error</h3>
+                    <p class="text-gray-400 mb-4">${message}</p>
+                    <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg">
+                        Retry
+                    </button>
+                </div>
+            `;
+        }
+
+        // Load scripts with callbacks
+        function loadScript(src, callback) {
+            const script = document.createElement('script');
+            script.src = src;
+            script.onload = callback;
+            script.onerror = () => {
+                console.error(`Failed to load: ${src}`);
+                showError(`Failed to load: ${src}`);
+            };
+            document.head.appendChild(script);
+        }
+
+        // Start loading when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM loaded, initializing analysis page...');
+            console.log('DOM loaded, starting component loading...');
             
             // Load navbar
             loadSharedNavbar();
             
-            // Wait a bit for all scripts to load, then initialize
-            setTimeout(() => {
-                // Check if all required components are loaded
-                const requiredComponents = [
-                    { name: 'ProgressAnalyzer', obj: window.ProgressAnalyzer },
-                    { name: 'getProgressSummary', obj: window.getProgressSummary },
-                    { name: 'OverviewCards', obj: window.OverviewCards },
-                    { name: 'RecentProgress', obj: window.RecentProgress },
-                    { name: 'TrendsPanel', obj: window.TrendsPanel },
-                    { name: 'LearningInsight', obj: window.LearningInsight },
-                    { name: 'AnalysisPageController', obj: window.AnalysisPageController }
-                ];
-                
-                const missing = requiredComponents.filter(comp => typeof comp.obj === 'undefined');
-                
-                if (missing.length > 0) {
-                    console.error('Missing components:', missing.map(c => c.name));
-                    document.getElementById('loading-state').classList.add('hidden');
-                    document.getElementById('empty-state').classList.remove('hidden');
-                    document.getElementById('empty-state').innerHTML = `
-                        <div class="glass-panel rounded-xl p-8 max-w-md mx-auto">
-                            <div class="text-6xl mb-4">⚠️</div>
-                            <h3 class="text-xl font-bold mb-2">Loading Error</h3>
-                            <p class="text-gray-400 mb-4">Some components failed to load: ${missing.map(c => c.name).join(', ')}</p>
-                            <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg">
-                                Retry
-                            </button>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                // Initialize controller
-                if (window.AnalysisPageController && typeof window.AnalysisPageController.init === 'function') {
-                    console.log('Initializing AnalysisPageController...');
-                    window.AnalysisPageController.init();
-                } else {
-                    console.error('AnalysisPageController not available or init method missing');
-                    console.log('AnalysisPageController type:', typeof window.AnalysisPageController);
-                    console.log('AnalysisPageController:', window.AnalysisPageController);
-                }
-            }, 500); // Give scripts time to load
+            // Load components in order
+            loadScript('analytics/ProgressAnalyzer.js', () => componentLoaded('ProgressAnalyzer'));
+            loadScript('analytics/ProgressSummaryBuilder.js', () => componentLoaded('ProgressSummaryBuilder'));
+            loadScript('analysis/components/OverviewCards.js', () => componentLoaded('OverviewCards'));
+            loadScript('analysis/components/RecentProgress.js', () => componentLoaded('RecentProgress'));
+            loadScript('analysis/components/TrendsPanel.js', () => componentLoaded('TrendsPanel'));
+            loadScript('analysis/components/LearningInsight.js', () => componentLoaded('LearningInsight'));
+            loadScript('analysis/AnalysisPageController.js', () => componentLoaded('AnalysisPageController'));
         });
     </script>
 </body>

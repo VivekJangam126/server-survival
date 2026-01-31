@@ -25,7 +25,7 @@ class AnalysisPageController {
         const sandboxButton = document.getElementById('mode-sandbox');
 
         if (!playButton || !sandboxButton) {
-            console.error('Mode selector buttons not found');
+            console.warn('Mode selector buttons not found - page may not be fully loaded');
             return;
         }
 
