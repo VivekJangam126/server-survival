@@ -1030,6 +1030,11 @@ function resetGame(mode = "survival") {
     // Mark game as started
     STATE.gameStarted = true;
 
+    // Session tracking - start new session for Play mode
+    if (window.sessionTracker) {
+        window.sessionTracker.startSession("PLAY");
+    }
+
     // Show/hide sandbox panel and objectives panel based on mode
     const sandboxPanel = document.getElementById("sandboxPanel");
     const objectivesPanel = document.getElementById("objectivesPanel");
@@ -2571,6 +2576,11 @@ function animate(time) {
     ) {
         STATE.isRunning = false;
 
+        // Session tracking - end session with failure
+        if (window.sessionTracker) {
+            window.sessionTracker.endSession("FAILED");
+        }
+
         // Determine failure reason and generate tips
         const failureAnalysis = analyzeFailure();
 
@@ -2815,6 +2825,11 @@ window.saveGameState = () => {
         };
 
         localStorage.setItem("serverSurvivalSave", JSON.stringify(saveData));
+
+        // Session tracking - mark save used
+        if (window.sessionTracker) {
+            window.sessionTracker.markSaveUsed();
+        }
 
         const saveBtn = document.getElementById("btn-save");
         const originalColor = saveBtn.classList.contains("hover:border-green-500")

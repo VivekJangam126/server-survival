@@ -3,61 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analysis - Cloud Learning Simulator</title>
+    <title>Progress Analysis - SERVER: Survival Protocol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        .trend-up { color: #10b981; }
+        .trend-down { color: #ef4444; }
+        .trend-same { color: #6b7280; }
+        .trend-mixed { color: #f59e0b; }
+        .trend-na { color: #6b7280; }
+        
+        /* Ensure proper scrolling */
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Ensure content doesn't get cut off */
+        .main-container {
+            min-height: calc(100vh - 80px);
+            padding-bottom: 2rem;
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="bg-gray-900 text-white min-h-screen overflow-y-auto">
     <!-- Shared navbar will be loaded here -->
-    
-    <div class="max-w-4xl mx-auto p-8" style="padding-top: 80px;">
-        <h1 class="text-4xl font-bold mb-4">Analysis Mode</h1>
-        <div class="bg-gray-800 p-8 rounded-lg text-center">
-            <div class="text-6xl mb-4">📊</div>
-            <h2 class="text-2xl font-bold mb-4">Coming Soon!</h2>
-            <p class="text-gray-400 mb-6">
-                The Analysis Mode is currently under development. This will include:
-            </p>
-            <ul class="text-left text-gray-300 space-y-2 mb-6">
-                <li>• Performance analytics</li>
-                <li>• Cost optimization insights</li>
-                <li>• Architecture recommendations</li>
-                <li>• Detailed reports</li>
-                <li>• Comparison tools</li>
-            </ul>
-            <button onclick="window.location.href='dashboard.html'" 
-                class="bg-blue-600 hover:bg-blue-500 px-6 py-3 rounded-lg font-bold">
-                Return to Dashboard
-            </button>
+    <div id="navbar-container"></div>
+
+    <div class="container mx-auto px-4 py-8 max-w-6xl pb-16 main-container">
+        <!-- Page Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 mb-2">
+                Progress Analysis
+            </h1>
+            <p class="text-gray-400">Track your improvement and performance trends</p>
+        </div>
+
+        <!-- Mode Selector -->
+        <div class="flex justify-center mb-8">
+            <div class="glass-panel rounded-lg p-1 flex">
+                <button id="mode-play" class="px-6 py-2 rounded-md font-medium transition-all duration-200 bg-blue-600 text-white">
+                    Play Mode
+                </button>
+                <button id="mode-sandbox" class="px-6 py-2 rounded-md font-medium transition-all duration-200 text-gray-400 hover:text-white">
+                    Sandbox Mode
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="text-center py-12">
+            <div class="text-gray-400">Loading your progress...</div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="text-center py-12 hidden">
+            <div class="glass-panel rounded-xl p-8 max-w-md mx-auto">
+                <div class="text-6xl mb-4">📊</div>
+                <h3 class="text-xl font-bold mb-2">No Data Yet</h3>
+                <p class="text-gray-400 mb-4">Start playing to see your progress analysis.</p>
+                <a href="play.html" class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg transition">
+                    Start Playing
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="main-content" class="space-y-8 hidden">
+            <!-- Overview Cards -->
+            <div id="overview-cards"></div>
+
+            <!-- Recent Progress -->
+            <div id="recent-progress"></div>
+
+            <!-- Trends Panel -->
+            <div id="trends-panel"></div>
+
+            <!-- Learning Insight -->
+            <div id="learning-insight"></div>
         </div>
     </div>
 
+    <!-- Scripts - Load in proper order -->
+    <script src="analytics/ProgressAnalyzer.js"></script>
+    <script src="analytics/ProgressSummaryBuilder.js"></script>
+    <script src="analysis/components/OverviewCards.js"></script>
+    <script src="analysis/components/RecentProgress.js"></script>
+    <script src="analysis/components/TrendsPanel.js"></script>
+    <script src="analysis/components/LearningInsight.js"></script>
+    <script src="analysis/AnalysisPageController.js"></script>
+
+    <!-- Load shared navbar -->
     <script>
-        // Load shared navbar
         async function loadSharedNavbar() {
             try {
+                const response = await fetch('shared/navbar.html');
+                const navbarHtml = await response.text();
+                document.getElementById('navbar-container').innerHTML = navbarHtml;
+                
+                // Load navbar script
                 const script = document.createElement('script');
                 script.src = 'shared/navbar.js';
                 document.head.appendChild(script);
-                
-                await new Promise((resolve) => {
-                    script.onload = resolve;
-                });
-                
-                await new Promise(resolve => setTimeout(resolve, 100));
-                
-                console.log('Shared navbar loaded for analysis page');
             } catch (error) {
-                console.error('Failed to load shared navbar:', error);
+                console.error('Failed to load navbar:', error);
             }
         }
 
-        // Initialize
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadSharedNavbar);
-        } else {
+        // Initialize page with better error handling
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing analysis page...');
+            
+            // Load navbar
             loadSharedNavbar();
-        }
+            
+            // Wait a bit for all scripts to load, then initialize
+            setTimeout(() => {
+                // Check if all required components are loaded
+                const requiredComponents = [
+                    { name: 'ProgressAnalyzer', obj: window.ProgressAnalyzer },
+                    { name: 'getProgressSummary', obj: window.getProgressSummary },
+                    { name: 'OverviewCards', obj: window.OverviewCards },
+                    { name: 'RecentProgress', obj: window.RecentProgress },
+                    { name: 'TrendsPanel', obj: window.TrendsPanel },
+                    { name: 'LearningInsight', obj: window.LearningInsight },
+                    { name: 'AnalysisPageController', obj: window.AnalysisPageController }
+                ];
+                
+                const missing = requiredComponents.filter(comp => typeof comp.obj === 'undefined');
+                
+                if (missing.length > 0) {
+                    console.error('Missing components:', missing.map(c => c.name));
+                    document.getElementById('loading-state').classList.add('hidden');
+                    document.getElementById('empty-state').classList.remove('hidden');
+                    document.getElementById('empty-state').innerHTML = `
+                        <div class="glass-panel rounded-xl p-8 max-w-md mx-auto">
+                            <div class="text-6xl mb-4">⚠️</div>
+                            <h3 class="text-xl font-bold mb-2">Loading Error</h3>
+                            <p class="text-gray-400 mb-4">Some components failed to load: ${missing.map(c => c.name).join(', ')}</p>
+                            <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg">
+                                Retry
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Initialize controller
+                if (window.AnalysisPageController && typeof window.AnalysisPageController.init === 'function') {
+                    console.log('Initializing AnalysisPageController...');
+                    window.AnalysisPageController.init();
+                } else {
+                    console.error('AnalysisPageController not available or init method missing');
+                    console.log('AnalysisPageController type:', typeof window.AnalysisPageController);
+                    console.log('AnalysisPageController:', window.AnalysisPageController);
+                }
+            }, 500); // Give scripts time to load
+        });
     </script>
 </body>
 </html>
