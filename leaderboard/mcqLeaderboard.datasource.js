@@ -19,10 +19,10 @@ export function getAttemptsForChallenge(challengeId) {
     }
 
     try {
-        // Get attempts from storage
+      
         const attempts = getAttemptsByChallenge(challengeId);
         
-        // Filter out invalid attempts
+     
         const validAttempts = attempts.filter(isValidAttemptForLeaderboard);
         
         return validAttempts;

@@ -139,7 +139,7 @@ export function startSurvival() {
 }
 
 export function startSandbox() {
-  window.location.href = 'play.html?mode=sandbox';
+  window.location.href = 'sandbox.html';
 }
 
 export function resumeLast() {

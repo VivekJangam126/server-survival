@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MCQ Challenges - SERVER: Survival Protocol</title>
+    <title>Leaderboard - SERVER: Survival Protocol</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="../style.css">
     <style>
@@ -47,30 +47,50 @@
             backdrop-filter: blur(10px);
             border: 1px solid rgba(75, 85, 99, 0.3);
         }
-        .challenge-card {
+
+        .leaderboard-table {
             transition: all 0.3s ease;
-            cursor: pointer;
         }
-        .challenge-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+
+        .leaderboard-row:hover {
+            background: rgba(59, 130, 246, 0.1);
         }
-        .difficulty-beginner { border-left: 4px solid #10b981; }
-        .difficulty-intermediate { border-left: 4px solid #f59e0b; }
-        .timer-warning { animation: pulse 1s infinite; }
-        .question-option {
+
+        .rank-badge {
             transition: all 0.2s ease;
         }
-        .question-option:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: #3b82f6;
+
+        .rank-1 {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #1f2937;
         }
-        .question-option.selected {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: #3b82f6;
+
+        .rank-2 {
+            background: linear-gradient(135deg, #c0c0c0, #e5e7eb);
+            color: #1f2937;
         }
-        .progress-bar {
-            transition: width 0.3s ease;
+
+        .rank-3 {
+            background: linear-gradient(135deg, #cd7f32, #f59e0b);
+            color: #1f2937;
+        }
+
+        .tab-active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .tab-inactive {
+            color: #9ca3af;
+        }
+
+        .tab-disabled {
+            color: #6b7280;
+            cursor: not-allowed;
+        }
+
+        .coming-soon-icon {
+            animation: pulse 2s infinite;
         }
 
         /* Scrollable containers with enhanced styling */
@@ -97,15 +117,9 @@
         .scrollable-container::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
         }
-
-        /* Make sure the main container can scroll */
-        .container {
-            max-height: none !important;
-            overflow-y: visible !important;
-        }
     </style>
 </head>
-<body class="bg-gray-900 text-white" style="overflow-y: auto; min-height: 100vh;">
+<body class="bg-gray-900 text-white dashboard-page" style="min-height: 100vh;">
     <!-- Shared navbar will be loaded here -->
     <div id="navbar-container"></div>
 
@@ -113,42 +127,46 @@
         <!-- Page Header -->
         <div class="text-center mb-8">
             <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300 mb-2">
-                MCQ Challenges
+                Leaderboard
             </h1>
-            <p class="text-gray-400">Test your cloud computing knowledge</p>
+            <p class="text-gray-400">See how participants perform across challenges</p>
         </div>
 
-        <!-- Challenge Mode Selector -->
-        <div class="flex justify-center mb-8">
-            <div class="glass-panel rounded-lg p-1 flex">
-                <button id="tab-mcq" class="px-6 py-2 rounded-md font-medium transition-all duration-200 bg-blue-600 text-white">
-                    MCQ Challenges
-                </button>
-                <button id="tab-game" class="px-6 py-2 rounded-md font-medium transition-all duration-200 text-gray-500 cursor-not-allowed" disabled>
-                    Game Challenges
-                    <span class="text-xs ml-2">(Coming Soon)</span>
-                </button>
-            </div>
+        <!-- Leaderboard Tabs -->
+        <div id="leaderboard-tabs" class="flex justify-center mb-8">
+            <!-- Tabs will be rendered here -->
         </div>
 
         <!-- Loading State -->
         <div id="loading-state" class="text-center py-12">
-            <div class="text-gray-400">Loading challenges...</div>
+            <div class="text-gray-400">Loading leaderboard...</div>
         </div>
 
-        <!-- Challenge List View -->
-        <div id="challenge-list-view" class="hidden">
-            <div id="challenge-list"></div>
+        <!-- MCQ Leaderboard View -->
+        <div id="mcq-leaderboard-view" class="hidden">
+            <!-- Challenge Selector -->
+            <div class="mb-6">
+                <div class="glass-panel rounded-lg p-4">
+                    <label for="challenge-selector" class="block text-sm font-medium text-gray-300 mb-2">
+                        Select Challenge
+                    </label>
+                    <select id="challenge-selector" class="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Choose a challenge...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- MCQ Leaderboard Table -->
+            <div id="mcq-leaderboard-table">
+                <!-- Table will be rendered here -->
+            </div>
         </div>
 
-        <!-- MCQ Test View -->
-        <div id="mcq-test-view" class="hidden">
-            <div id="mcq-test"></div>
-        </div>
-
-        <!-- Result Summary View -->
-        <div id="result-summary-view" class="hidden">
-            <div id="result-summary"></div>
+        <!-- Game Leaderboard View (Coming Soon) -->
+        <div id="game-leaderboard-view" class="hidden">
+            <div id="coming-soon">
+                <!-- Coming Soon component will be rendered here -->
+            </div>
         </div>
 
         <!-- Error State -->
@@ -165,19 +183,6 @@
     </div>
 
     <script type="module">
-        // Import MCQ engine and components
-        import { 
-            getAllChallenges,
-            getAttemptsByUser,
-            startChallenge,
-            submitAnswer,
-            submitChallenge,
-            getStatus,
-            setTimeUpdateCallback,
-            setTimeUpCallback,
-            resetEngine
-        } from '../src/challenges/index.js';
-
         // Load shared navbar
         async function loadSharedNavbar() {
             try {
@@ -197,11 +202,10 @@
         // Load components dynamically
         async function loadComponents() {
             const components = [
-                './ChallengesPageController.js',
-                './components/ChallengeList.js',
-                './components/MCQTest.js',
-                './components/QuestionCard.js',
-                './components/ResultSummary.js'
+                './LeaderboardPageController.js',
+                './components/LeaderboardTabs.js',
+                './components/MCQLeaderboardTable.js',
+                './components/ComingSoon.js'
             ];
 
             for (const componentPath of components) {
@@ -218,7 +222,7 @@
         // Initialize page
         async function initializePage() {
             try {
-                console.log('Initializing MCQ Challenges page...');
+                console.log('Initializing Leaderboard page...');
                 
                 // Load navbar
                 await loadSharedNavbar();
@@ -227,11 +231,11 @@
                 await loadComponents();
                 
                 // Initialize controller
-                if (window.ChallengesPageController) {
-                    window.ChallengesPageController.init();
-                    console.log('MCQ Challenges page initialized successfully');
+                if (window.LeaderboardPageController) {
+                    window.LeaderboardPageController.init();
+                    console.log('Leaderboard page initialized successfully');
                 } else {
-                    throw new Error('ChallengesPageController not available');
+                    throw new Error('LeaderboardPageController not available');
                 }
                 
             } catch (error) {

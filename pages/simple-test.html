@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Leaderboard Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="bg-gray-900 text-white dashboard-page">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <h1 class="text-3xl font-bold mb-8">Simple Leaderboard Test</h1>
+        
+        <div class="glass-panel rounded-xl p-6 mb-6">
+            <h2 class="text-xl font-bold mb-4">Test Results</h2>
+            <div id="results" class="space-y-2"></div>
+        </div>
+        
+        <div class="glass-panel rounded-xl p-6">
+            <h2 class="text-xl font-bold mb-4">Actions</h2>
+            <div class="space-x-4">
+                <button onclick="testBasicFunctionality()" class="bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded">
+                    Test Basic Functionality
+                </button>
+                <button onclick="generateTestData()" class="bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded">
+                    Generate Test Data
+                </button>
+                <button onclick="clearData()" class="bg-red-600 hover:bg-red-500 text-white py-2 px-4 rounded">
+                    Clear Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = type === 'error' ? 'text-red-400' : type === 'success' ? 'text-green-400' : 'text-blue-400';
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            results.appendChild(div);
+            console.log(message);
+        }
+
+        function testBasicFunctionality() {
+            log('Testing basic leaderboard functionality...');
+            
+            try {
+                // Test localStorage access
+                const testData = { test: 'data' };
+                localStorage.setItem('test_key', JSON.stringify(testData));
+                const retrieved = JSON.parse(localStorage.getItem('test_key'));
+                
+                if (retrieved.test === 'data') {
+                    log('✓ localStorage access working', 'success');
+                } else {
+                    log('✗ localStorage test failed', 'error');
+                }
+                
+                localStorage.removeItem('test_key');
+                
+                // Test MCQ attempts access
+                const attempts = localStorage.getItem('mcq_attempts');
+                if (attempts) {
+                    const parsed = JSON.parse(attempts);
+                    log(`✓ Found ${parsed.length} MCQ attempts in storage`, 'success');
+                } else {
+                    log('No MCQ attempts found in storage (this is normal if no data exists)', 'info');
+                }
+                
+                // Test navigation
+                log(`Current URL: ${window.location.href}`);
+                log(`Origin: ${window.location.origin}`);
+                log(`Pathname: ${window.location.pathname}`);
+                
+                log('✓ Basic functionality test completed', 'success');
+                
+            } catch (error) {
+                log(`✗ Basic functionality test failed: ${error.message}`, 'error');
+            }
+        }
+
+        function generateTestData() {
+            log('Generating test MCQ attempts...');
+            
+            try {
+                const testAttempts = [
+                    {
+                        attempt_id: 'test-001',
+                        user_id: 'alice_dev',
+                        mcq_challenge_id: 'cloud-basics-001',
+                        score: 4,
+                        total_questions: 5,
+                        percentage: 80.0,
+                        time_taken: 120,
+                        completed_at: Date.now() - 86400000 // 1 day ago
+                    },
+                    {
+                        attempt_id: 'test-002',
+                        user_id: 'bob_admin',
+                        mcq_challenge_id: 'cloud-basics-001',
+                        score: 5,
+                        total_questions: 5,
+                        percentage: 100.0,
+                        time_taken: 95,
+                        completed_at: Date.now() - 43200000 // 12 hours ago
+                    },
+                    {
+                        attempt_id: 'test-003',
+                        user_id: 'charlie_ops',
+                        mcq_challenge_id: 'cloud-basics-001',
+                        score: 3,
+                        total_questions: 5,
+                        percentage: 60.0,
+                        time_taken: 180,
+                        completed_at: Date.now() - 21600000 // 6 hours ago
+                    }
+                ];
+                
+                localStorage.setItem('mcq_attempts', JSON.stringify(testAttempts));
+                log(`✓ Generated ${testAttempts.length} test attempts`, 'success');
+                log('You can now test the leaderboard with this data', 'info');
+                
+            } catch (error) {
+                log(`✗ Failed to generate test data: ${error.message}`, 'error');
+            }
+        }
+
+        function clearData() {
+            log('Clearing test data...');
+            
+            try {
+                localStorage.removeItem('mcq_attempts');
+                log('✓ Test data cleared', 'success');
+                
+            } catch (error) {
+                log(`✗ Failed to clear data: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Simple leaderboard test page loaded');
+            log('Click "Test Basic Functionality" to verify everything works');
+            log('Click "Generate Test Data" to create sample MCQ attempts');
+            log('Then navigate to the leaderboard page to see the results');
+        });
+    </script>
+</body>
+</html>
