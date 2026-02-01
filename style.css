@@ -588,3 +588,17 @@ body {
 .pointer-events-auto {
   pointer-events: auto;
 }
+
+
+
+/* ===============================
+   Dashboard Pages Scroll Fix
+   =============================== */
+
+.dashboard-page {
+  overflow-y: auto;
+}
+
+.dashboard-page body {
+  overflow-y: auto;
+}
