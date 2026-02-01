@@ -655,3 +655,338 @@ src/
 ---
 
 **Phase 4 Complete** ✅
+
+---
+
+# Phase 5: Mapping Hub UI Assembly
+
+## Overview
+
+Phase 5 assembles the Game → Real-World Mapping Hub UI using existing data (Phase 1) and UI components (Phase 3). This page explains why things happened in the game and bridges gameplay to real cloud concepts.
+
+---
+
+## Files Created
+
+### MappingHubUI.js
+**File:** `src/pages/MappingHubUI.js`
+
+**Route:** `/learn/mapping`
+
+**Purpose:**
+- Explain why things happened in the game
+- Bridge gameplay → real cloud concepts
+- Complete the gameplay → learning loop
+
+---
+
+## Page Layout
+
+```
+SectionHeader: "Game → Real-World Mapping Hub"
+----------------------------------
+Section 1: Common Game Events (grid of event cards)
+----------------------------------
+Section 2: Failure Chain Explorer (expandable chains with nodes)
+----------------------------------
+Section 3: Architecture Decision Analyzer (accordion list)
+----------------------------------
+Section 4: Game ↔ Cloud Service Mapping (table with expandable rows)
+----------------------------------
+Section 5: Why Did I Lose? Debug Mode (session selector + analyze button)
+```
+
+---
+
+## Section Details
+
+### Section 1 — Common Game Events
+
+**Data Source:** `src/data/mapping/gameEvents.json`
+
+**UI Components Used:**
+- Grid layout with clickable event cards
+- `TagBadge` for severity indicators
+- Modal detail panel on click
+
+**Card Display:**
+- Title
+- Short description
+- Severity badge (high=danger, medium=warning, low=success)
+
+**Detail Panel Shows:**
+- What happened (description)
+- Primary concepts (TagBadges - danger variant)
+- Secondary concepts (TagBadges - warning variant)
+- Fix suggestions using `LearnLink` components
+
+**Interaction:**
+- Click card → Opens modal detail panel
+- Click outside or ESC → Closes modal
+- LearnLinks navigate to Learn Mode with context
+
+---
+
+### Section 2 — Failure Chain Explorer
+
+**Data Source:** `src/data/mapping/failureChains.json`
+
+**UI Components Used:**
+- `ExpandableCard` for each failure chain
+- Custom chain node layout (numbered steps)
+- `TagBadge` for prevention concepts
+- `LearnLink` for learning navigation
+
+**Node Display:**
+- Numbered indicator (1, 2, 3...)
+- Node title
+- Causes (truncated to 3)
+- Effects (truncated to 3)
+- Visual connector lines between nodes
+
+**Node Click Behavior:**
+- Shows expandable detail panel below node
+- Prevention concepts as TagBadges
+- LearnLinks for each prevention concept
+
+**Context Highlighting:**
+- Nodes matching `chainId` query param are highlighted
+- Nodes matching `concept` query param are highlighted
+
+---
+
+### Section 3 — Architecture Decision Analyzer
+
+**Data Source:** `src/data/mapping/decisions.json`
+
+**UI Components Used:**
+- `ExpandableCard` for each decision (accordion style)
+- `TagBadge` for correct pattern concepts
+- `LearnLink` for learning navigation
+
+**Decision Card Shows:**
+- Title: The decision made (collapsed)
+- Expanded content:
+  - ❌ Why It Failed (explanation)
+  - ✓ Correct Architecture Pattern (concept badges)
+  - 📚 Learn More (LearnLinks)
+
+---
+
+### Section 4 — Game ↔ Cloud Service Mapping
+
+**Data Source:** Static inline `CLOUD_SERVICE_MAPPING` array
+
+**Mappings:**
+| Game Element | Cloud Concept | Learn Link |
+|--------------|---------------|------------|
+| Server Instances | Stateless Compute | auto_scaling |
+| Fast Memory Store | In-Memory Cache | cache |
+| Request Buffer | Message Queue | queues |
+| Security Shield | Web Application Firewall | waf |
+| Traffic Distributor | Load Balancer | load_balancer |
+| Request Throttle | Rate Limiting | rate_limiting |
+
+**UI:**
+- Table layout with 3 columns
+- Game Element | Cloud Concept | Learn
+- Rows are expandable to show description
+- LearnLink navigates with context
+
+---
+
+### Section 5 — "Why Did I Lose?" Debug Mode
+
+**Purpose:** Help user analyze failure after a game session
+
+**UI Components:**
+- Session selector dropdown
+- Analyze Failure button
+- Output panel for results
+- `EmptyState` for no data
+
+**MVP Behavior:**
+1. User selects "Last Session" from dropdown
+2. Clicks "Analyze Failure"
+3. Rule-based analysis runs (no AI/backend)
+4. Output shows:
+   - 🔴 Primary Failure
+   - ⚠️ Root Cause
+   - 📚 Suggested Learn Mode Topics
+
+**Rule-Based Logic:**
+- Picks first high-severity event as primary failure
+- Picks first failure chain node as root cause
+- Suggests learnLinks from the primary event
+
+---
+
+## Navigation Context Handling
+
+**Query Parameters Read:**
+- `event` - Auto-expands event section, highlights event
+- `concept` - Filters related content, highlights nodes
+- `sessionId` - Preserved for learn link context
+- `chainId` - Auto-expands specific failure chain
+- `decisionId` - Auto-expands specific decision
+
+**Implementation:**
+- `handleNavigationContext()` reads params after render
+- Uses `expandedCards` Map to track card instances
+- Calls `card.open()` to auto-expand relevant sections
+
+---
+
+## Empty & Edge States
+
+**Handled Gracefully:**
+| Scenario | Behavior |
+|----------|----------|
+| No mapping data | EmptyState with refresh action |
+| Invalid event ID | Detail panel won't open |
+| No session available | Debug output shows EmptyState |
+| Direct navigation without params | Page renders normally |
+| Data load failure | Error state with refresh button |
+
+---
+
+## Integration with Existing Code
+
+**Uses from Phase 1:**
+- `gameEvents.json` - Event data
+- `failureChains.json` - Failure chain data
+- `decisions.json` - Decision data
+
+**Uses from Phase 2:**
+- `MappingHubPage.js` - Navigation controller (data loading, query params)
+- `navigation.js` - goToLearnIndex, NAV_SOURCES, getNavigationContext
+
+**Uses from Phase 3:**
+- `SectionHeader` - Section titles
+- `ExpandableCard` - Collapsible sections
+- `TagBadge` - Severity/concept badges
+- `LearnLink` - Navigation to Learn Mode
+- `createLearnLinkGroup` - Groups of LearnLinks
+- `EmptyState` - Empty/error states
+
+---
+
+## Styling
+
+- **Tailwind CSS only** - No new CSS files
+- **Glass-panel aesthetic** - Matches Learn Mode
+- **Visual density** - Consistent with Phase 4
+
+**CSS Classes Used:**
+- `glass-panel` - Panel backgrounds
+- `grid grid-cols-*` - Event card grid
+- `space-y-*` - Section spacing
+- `divide-y` - Table row dividers
+- Color variants: cyan (links), red (errors), yellow (warnings), green (success)
+
+---
+
+## Class Structure
+
+```javascript
+class MappingHubUI {
+    // Properties
+    container          // DOM container
+    expandedCards      // Map<string, ExpandableCard>
+    selectedEvent      // Current selected event ID
+    selectedNode       // Current selected node ID
+    debugOutput        // Debug output panel reference
+    
+    // Lifecycle
+    initialize(container)  // Init and render
+    render()               // Full page render
+    destroy()              // Cleanup
+    
+    // Section Renderers
+    renderPageHeader()
+    renderGameEventsSection()
+    renderFailureChainsSection()
+    renderDecisionsSection()
+    renderCloudMappingSection()
+    renderDebugSection()
+    
+    // Event Handlers
+    handleEventClick(event)
+    handleNodeClick(node, container, icon)
+    handleAnalyzeClick(sessionValue)
+    
+    // Helpers
+    createEventCard(event)
+    showEventDetail(event)
+    createChainCard(chain)
+    createChainNode(node, index, total, highlighted)
+    createDecisionCard(decision)
+    createMappingRow(mapping)
+    performRuleBasedAnalysis()
+    renderAnalysisResult(result)
+    formatConceptName(conceptId)
+    handleNavigationContext()
+    renderError()
+}
+```
+
+---
+
+## Usage Example
+
+```javascript
+import { MappingHubUI } from './pages/MappingHubUI.js';
+
+// Get container element
+const container = document.getElementById('mapping-hub-container');
+
+// Initialize UI
+const mappingHub = new MappingHubUI();
+await mappingHub.initialize(container);
+
+// Later, cleanup
+mappingHub.destroy();
+```
+
+---
+
+## Validation Checklist
+
+- [x] /learn/mapping loads without errors
+- [x] Clicking event shows detail modal
+- [x] Learn links navigate correctly with context
+- [x] Failure chains render in correct order
+- [x] Chain nodes are clickable and show details
+- [x] Decisions accordion expands/collapses
+- [x] Cloud mapping table rows are expandable
+- [x] Debug mode shows output after analyze
+- [x] Query params auto-expand relevant sections
+- [x] Refresh preserves navigation context
+- [x] No console errors
+- [x] Empty states handled gracefully
+- [x] Modal closes on ESC and backdrop click
+
+---
+
+## Project Status After Phase 5
+
+✅ **Gameplay → Learning Loop Complete**
+- Game events explain what happened
+- Failure chains show cascading effects
+- Decisions explain mistakes
+- LearnLinks connect to tutorials
+
+✅ **Unique Differentiator Established**
+- Bidirectional mapping (Game ↔ Cloud)
+- Visual failure chain exploration
+- Debug mode for post-game analysis
+
+✅ **MVP Feature Set Complete**
+- Learn Mode (Phase 4)
+- Mapping Hub (Phase 5)
+- Navigation between them (Phase 2)
+- Consistent UI components (Phase 3)
+
+---
+
+**Phase 5 Complete** ✅
