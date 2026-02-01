@@ -1,0 +1,65 @@
+[
+  {
+    "eventId": "traffic_spike_collapse",
+    "title": "System Collapsed During Traffic Spike",
+    "shortDescription": "System failed to handle sudden increase in user requests, leading to complete outage",
+    "primaryConcepts": ["traffic_spikes", "auto_scaling"],
+    "secondaryConcepts": ["load_balancer", "rate_limiting", "queues"],
+    "learnLinks": ["load_balancer", "auto_scaling", "traffic_spikes"],
+    "severity": "high"
+  },
+  {
+    "eventId": "db_failed_first",
+    "title": "Database Failed First",
+    "shortDescription": "Database health dropped before other services due to excessive queries or lack of caching",
+    "primaryConcepts": ["cache", "bottlenecks"],
+    "secondaryConcepts": ["auto_scaling", "queues"],
+    "learnLinks": ["cache", "traffic_spikes"],
+    "severity": "high"
+  },
+  {
+    "eventId": "system_slow_under_load",
+    "title": "System Became Slow Under Load",
+    "shortDescription": "Response times degraded significantly as traffic increased, causing poor user experience",
+    "primaryConcepts": ["cache", "bottlenecks"],
+    "secondaryConcepts": ["load_balancer", "auto_scaling", "queues"],
+    "learnLinks": ["load_balancer", "cache", "traffic_spikes"],
+    "severity": "medium"
+  },
+  {
+    "eventId": "costs_increased_fast",
+    "title": "Costs Increased Too Fast",
+    "shortDescription": "Infrastructure spending exceeded budget due to aggressive scaling or over-provisioning",
+    "primaryConcepts": ["cost_optimization", "auto_scaling"],
+    "secondaryConcepts": ["cache"],
+    "learnLinks": ["auto_scaling", "cost_optimization"],
+    "severity": "medium"
+  },
+  {
+    "eventId": "security_attack_failure",
+    "title": "Security Attack Caused Failure",
+    "shortDescription": "System failed due to malicious traffic overwhelming resources without proper protection",
+    "primaryConcepts": ["waf", "rate_limiting"],
+    "secondaryConcepts": ["auto_scaling", "load_balancer"],
+    "learnLinks": ["traffic_spikes", "load_balancer"],
+    "severity": "high"
+  },
+  {
+    "eventId": "stable_but_low_score",
+    "title": "System Stable But Score Low",
+    "shortDescription": "System remained online but scored poorly due to inefficient resource usage or high costs",
+    "primaryConcepts": ["cost_optimization"],
+    "secondaryConcepts": ["cache", "auto_scaling"],
+    "learnLinks": ["cost_optimization", "cache"],
+    "severity": "low"
+  },
+  {
+    "eventId": "queue_overflow",
+    "title": "Queue Overflow Under Pressure",
+    "shortDescription": "Message queue filled up faster than consumers could process, causing request drops",
+    "primaryConcepts": ["queues", "auto_scaling"],
+    "secondaryConcepts": ["bottlenecks", "traffic_spikes"],
+    "learnLinks": ["traffic_spikes", "auto_scaling"],
+    "severity": "high"
+  }
+]
