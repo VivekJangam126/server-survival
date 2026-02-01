@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Navbar Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-8">
+    <h1 class="text-2xl mb-4">Simple Navbar Test</h1>
+    <div id="status" class="bg-gray-800 p-4 rounded mb-4">
+        <p>Checking navbar script...</p>
+    </div>
+    
+    <script>
+        function log(msg) {
+            const status = document.getElementById('status');
+            status.innerHTML += `<p>${msg}</p>`;
+            console.log(msg);
+        }
+        
+        log('1. Loading navbar script...');
+        
+        // Load the script dynamically to catch errors
+        const script = document.createElement('script');
+        script.src = '/shared/navbar/navbar.js';
+        
+        script.onload = function() {
+            log('2. Script loaded successfully');
+            log('3. Checking window.sharedNavbar: ' + (typeof window.sharedNavbar));
+            
+            if (window.sharedNavbar) {
+                log('4. ✅ Navbar instance found!');
+                log('5. Calling navbar.load()...');
+                window.sharedNavbar.load().then(() => {
+                    log('6. ✅ Navbar loaded!');
+                    const nav = document.getElementById('shared-navbar');
+                    log('7. Navbar element: ' + (nav ? 'FOUND' : 'NOT FOUND'));
+                    if (nav) {
+                        log('8. Navbar height: ' + nav.offsetHeight);
+                    }
+                }).catch(err => {
+                    log('6. ❌ Error loading navbar: ' + err.message);
+                });
+            } else {
+                log('4. ❌ Navbar instance NOT found!');
+                log('5. This means the script executed but failed to create the instance');
+            }
+        };
+        
+        script.onerror = function() {
+            log('2. ❌ Script failed to load!');
+        };
+        
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

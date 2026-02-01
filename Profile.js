@@ -1,6 +1,6 @@
 async function loadSharedNavbar(){
     const script = document.createElement('script');
-    script.src='shared/navbar.js';
+    script.src='/shared/navbar/navbar.js';
     document.head.appendChild(script);
 }
 

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Navbar Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/styles/global.css">
+</head>
+<body class="bg-gray-900 text-white dashboard-page">
+    <!-- Navbar will be loaded here -->
+    
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <h1 class="text-3xl font-bold mb-8">Profile Navbar Test</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Test Profile Data -->
+            <div class="glass-panel rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4">Test Profile Data</h2>
+                <div class="space-y-4">
+                    <button onclick="testDefaultProfile()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded">
+                        Load Default Profile
+                    </button>
+                    <button onclick="testAdvancedProfile()" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 px-4 rounded">
+                        Load Advanced Profile
+                    </button>
+                    <button onclick="testBeginnerProfile()" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white py-2 px-4 rounded">
+                        Load Beginner Profile
+                    </button>
+                    <button onclick="clearProfile()" class="w-full bg-red-600 hover:bg-red-500 text-white py-2 px-4 rounded">
+                        Clear Profile Data
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Profile Info Display -->
+            <div class="glass-panel rounded-xl p-6">
+                <h2 class="text-xl font-bold mb-4">Current Profile Info</h2>
+                <div id="profile-info" class="space-y-2 text-sm">
+                    <div>Username: <span id="current-username">-</span></div>
+                    <div>Level: <span id="current-level">-</span></div>
+                    <div>XP: <span id="current-xp">-</span></div>
+                    <div>Challenges: <span id="current-challenges">-</span></div>
+                    <div>Progress: <span id="current-progress">-</span>%</div>
+                </div>
+                <button onclick="refreshProfileInfo()" class="mt-4 bg-gray-600 hover:bg-gray-500 text-white py-1 px-3 rounded text-sm">
+                    Refresh Info
+                </button>
+            </div>
+        </div>
+        
+        <div class="mt-8 glass-panel rounded-xl p-6">
+            <h2 class="text-xl font-bold mb-4">Instructions</h2>
+            <ol class="list-decimal list-inside space-y-2 text-gray-300">
+                <li>Hover over the profile icon in the navbar to see the profile card</li>
+                <li>Click the profile icon to navigate to the profile page</li>
+                <li>Use the test buttons above to change profile data and see updates</li>
+                <li>The profile card should update automatically when data changes</li>
+                <li>Test on both desktop and mobile views</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Test functions
+        function testDefaultProfile() {
+            const profileData = {
+                name: 'Cloud Learner',
+                title: 'Aspiring Cloud Architect',
+                level: 1,
+                xp: 0,
+                streak: 0,
+                avatar: 'U',
+                challengesCompleted: 0
+            };
+            
+            if (typeof window.saveProfileData === 'function') {
+                window.saveProfileData(profileData);
+            } else {
+                localStorage.setItem('userProfile', JSON.stringify(profileData));
+                if (typeof window.loadProfileData === 'function') {
+                    window.loadProfileData();
+                }
+            }
+            refreshProfileInfo();
+        }
+        
+        function testAdvancedProfile() {
+            const profileData = {
+                name: 'Cloud Master',
+                title: 'Senior Cloud Architect',
+                level: 15,
+                xp: 12450,
+                streak: 45,
+                avatar: '🧑‍💻',
+                challengesCompleted: 124
+            };
+            
+            if (typeof window.saveProfileData === 'function') {
+                window.saveProfileData(profileData);
+            } else {
+                localStorage.setItem('userProfile', JSON.stringify(profileData));
+                if (typeof window.loadProfileData === 'function') {
+                    window.loadProfileData();
+                }
+            }
+            refreshProfileInfo();
+        }
+        
+        function testBeginnerProfile() {
+            const profileData = {
+                name: 'New Learner',
+                title: 'Cloud Beginner',
+                level: 3,
+                xp: 850,
+                streak: 5,
+                avatar: '🌟',
+                challengesCompleted: 8
+            };
+            
+            if (typeof window.saveProfileData === 'function') {
+                window.saveProfileData(profileData);
+            } else {
+                localStorage.setItem('userProfile', JSON.stringify(profileData));
+                if (typeof window.loadProfileData === 'function') {
+                    window.loadProfileData();
+                }
+            }
+            refreshProfileInfo();
+        }
+        
+        function clearProfile() {
+            localStorage.removeItem('userProfile');
+            if (typeof window.loadProfileData === 'function') {
+                window.loadProfileData();
+            }
+            refreshProfileInfo();
+        }
+        
+        function refreshProfileInfo() {
+            try {
+                const saved = localStorage.getItem('userProfile');
+                if (saved) {
+                    const profile = JSON.parse(saved);
+                    document.getElementById('current-username').textContent = profile.name || '-';
+                    document.getElementById('current-level').textContent = profile.level || '-';
+                    document.getElementById('current-xp').textContent = profile.xp || '-';
+                    document.getElementById('current-challenges').textContent = profile.challengesCompleted || '-';
+                    document.getElementById('current-progress').textContent = Math.min(100, Math.floor((profile.xp % 1000) / 10)) || '0';
+                } else {
+                    document.getElementById('current-username').textContent = 'Cloud Learner';
+                    document.getElementById('current-level').textContent = '1';
+                    document.getElementById('current-xp').textContent = '0';
+                    document.getElementById('current-challenges').textContent = '0';
+                    document.getElementById('current-progress').textContent = '0';
+                }
+            } catch (error) {
+                console.error('Error refreshing profile info:', error);
+            }
+        }
+        
+        // Load navbar and initialize
+        async function loadSharedNavbar() {
+            try {
+                const response = await fetch('shared/navbar.html');
+                const navbarHtml = await response.text();
+                document.body.insertAdjacentHTML('afterbegin', navbarHtml);
+                
+                // Load navbar script
+                const script = document.createElement('script');
+                script.src = '/shared/navbar/navbar.js';
+                document.head.appendChild(script);
+                
+                // Wait a bit for navbar to initialize, then refresh profile info
+                setTimeout(() => {
+                    refreshProfileInfo();
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Failed to load navbar:', error);
+            }
+        }
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', loadSharedNavbar);
+    </script>
+</body>
+</html>

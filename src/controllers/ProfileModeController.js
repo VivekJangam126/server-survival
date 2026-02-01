@@ -1,7 +1,7 @@
 /**
  * ProfileModeController - Manages the Profile mode with settings, achievements, and progress
  */
-import { BaseModeController } from '../core/BaseModeController.js';
+import { BaseModeController } from '/core/BaseModeController.js';
 
 class ProfileModeController extends BaseModeController {
     constructor(app) {

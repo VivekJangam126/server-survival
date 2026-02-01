@@ -1,7 +1,7 @@
 /**
  * LearnModeController - Manages the Learn mode with tutorials, concepts, and videos
  */
-import { BaseModeController } from '../core/BaseModeController.js';
+import { BaseModeController } from '/core/BaseModeController.js';
 
 class LearnModeController extends BaseModeController {
     constructor(app) {

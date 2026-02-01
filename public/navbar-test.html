@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navbar Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/styles/global.css">
+    
+    <!-- Shared Navbar Script -->
+    <script src="/shared/navbar/navbar.js" defer></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8" style="padding-top: 100px;">
+        <h1 class="text-3xl font-bold mb-8 text-center">Navbar Test Page</h1>
+        
+        <div class="bg-gray-800 p-6 rounded-lg">
+            <h2 class="text-xl font-semibold mb-4">Debug Information</h2>
+            <div id="debug-info" class="space-y-2 text-sm font-mono">
+                <p>Loading debug info...</p>
+            </div>
+        </div>
+        
+        <div class="mt-4 bg-gray-800 p-6 rounded-lg">
+            <h2 class="text-xl font-semibold mb-4">Manual Controls</h2>
+            <button onclick="testNavbar()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded mr-2">
+                Test Navbar
+            </button>
+            <button onclick="reloadNavbar()" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded mr-2">
+                Reload Navbar
+            </button>
+            <button onclick="checkNavbar()" class="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded">
+                Check Navbar
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        function updateDebug(message) {
+            const debugInfo = document.getElementById('debug-info');
+            const p = document.createElement('p');
+            p.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            debugInfo.appendChild(p);
+        }
+        
+        function testNavbar() {
+            updateDebug('Testing navbar...');
+            updateDebug(`window.sharedNavbar exists: ${!!window.sharedNavbar}`);
+            updateDebug(`Navbar isLoaded: ${window.sharedNavbar?.isLoaded}`);
+            updateDebug(`Navbar isHidden: ${window.sharedNavbar?.isHidden}`);
+            
+            const navbarElement = document.getElementById('shared-navbar');
+            updateDebug(`Navbar element exists: ${!!navbarElement}`);
+            
+            if (navbarElement) {
+                updateDebug(`Navbar display: ${navbarElement.style.display}`);
+                updateDebug(`Navbar offsetHeight: ${navbarElement.offsetHeight}`);
+                updateDebug(`Navbar classList: ${navbarElement.classList.toString()}`);
+            }
+        }
+        
+        function reloadNavbar() {
+            updateDebug('Attempting to reload navbar...');
+            if (window.sharedNavbar) {
+                window.sharedNavbar.load().then(() => {
+                    updateDebug('Navbar reload completed');
+                    testNavbar();
+                }).catch(err => {
+                    updateDebug(`Navbar reload error: ${err.message}`);
+                });
+            } else {
+                updateDebug('ERROR: window.sharedNavbar not found');
+            }
+        }
+        
+        function checkNavbar() {
+            updateDebug('Checking navbar status...');
+            
+            // Check if script loaded
+            const scripts = Array.from(document.scripts);
+            const navbarScript = scripts.find(s => s.src.includes('navbar.js'));
+            updateDebug(`Navbar script found: ${!!navbarScript}`);
+            if (navbarScript) {
+                updateDebug(`Script src: ${navbarScript.src}`);
+            }
+            
+            // Check all elements in body
+            const bodyChildren = Array.from(document.body.children);
+            updateDebug(`Body has ${bodyChildren.length} children`);
+            bodyChildren.forEach((child, i) => {
+                updateDebug(`Child ${i}: ${child.tagName} id="${child.id}" class="${child.className}"`);
+            });
+        }
+        
+        // Auto-run on load
+        window.addEventListener('load', () => {
+            updateDebug('Page loaded');
+            setTimeout(() => {
+                testNavbar();
+                checkNavbar();
+            }, 500);
+        });
+        
+        // Check immediately
+        updateDebug('Script executing');
+        updateDebug(`Document readyState: ${document.readyState}`);
+    </script>
+</body>
+</html>
