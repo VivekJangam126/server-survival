@@ -155,6 +155,13 @@ class StateManager {
     initializeDefaultState() {
         const defaultState = {
             user: {
+                // Auth state for Supabase authentication
+                // This is managed by authBootstrap.js
+                auth: {
+                    id: null,
+                    email: null,
+                    isAuthenticated: false
+                },
                 profile: {
                     id: null,
                     username: '',
@@ -297,6 +304,7 @@ class StateManager {
     validateState() {
         // Basic validation - can be extended
         const requiredPaths = [
+            'user.auth',
             'user.profile',
             'user.progress',
             'game.mode',

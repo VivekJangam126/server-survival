@@ -71,8 +71,8 @@ class TutorialDetailPage {
             // Load tutorials
             await this.loadTutorials();
             
-            // Initialize learn state
-            learnState.initialize(this.tutorials);
+            // Initialize learn state (async for backend sync)
+            await learnState.initialize(this.tutorials);
             
             // Validate conceptId
             if (!isValidConceptId(this.conceptId, this.tutorials)) {

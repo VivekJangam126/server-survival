@@ -42,8 +42,8 @@ class LearnPage {
             // Load tutorials
             await this.loadTutorials();
             
-            // Initialize learn state with tutorials
-            learnState.initialize(this.tutorials);
+            // Initialize learn state with tutorials (async for backend sync)
+            await learnState.initialize(this.tutorials);
             
             // Subscribe to state changes
             this.unsubscribe = learnState.subscribe(() => this.render());

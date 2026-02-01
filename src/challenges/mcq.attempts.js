@@ -1,17 +1,62 @@
 /**
  * MCQ Attempts Storage
- * Handles persistence of MCQ attempt data to localStorage
+ * Handles persistence of MCQ attempt data to localStorage and Supabase
  * No ranking or sorting - pure storage operations
+ * 
+ * Now with Supabase backend support and localStorage fallback
  */
 
 import { STORAGE_KEYS, ERROR_MESSAGES } from './challenges.constants.js';
+import mcqService from '../services/mcqService.js';
+
+// Track if we're using backend
+let useBackend = false;
+let currentUserId = null;
 
 /**
- * Save an MCQ attempt to localStorage
+ * Initialize the attempts module (check auth status)
+ */
+async function initializeBackend() {
+    try {
+        currentUserId = await mcqService.getCurrentUserId();
+        useBackend = !!currentUserId;
+        console.log('mcq.attempts: Backend mode:', useBackend ? 'enabled' : 'disabled (localStorage only)');
+    } catch (error) {
+        console.warn('mcq.attempts: Failed to initialize backend, using localStorage', error);
+        useBackend = false;
+        currentUserId = null;
+    }
+}
+
+// Initialize on module load
+initializeBackend();
+
+// Import for cache clearing (will be lazy loaded)
+let clearBackendCacheFn = null;
+
+/**
+ * Clear leaderboard cache after saving new attempt
+ */
+async function clearLeaderboardCache() {
+    try {
+        if (!clearBackendCacheFn) {
+            const module = await import('/features/leaderboard/mcqLeaderboard.datasource.js');
+            clearBackendCacheFn = module.clearBackendCache;
+        }
+        if (clearBackendCacheFn) {
+            clearBackendCacheFn();
+        }
+    } catch (error) {
+        // Leaderboard module might not be loaded, ignore
+    }
+}
+
+/**
+ * Save an MCQ attempt to localStorage and optionally to Supabase
  * @param {Object} attempt - The attempt object to save
  * @returns {boolean} True if saved successfully, false otherwise
  */
-export function saveAttempt(attempt) {
+export async function saveAttempt(attempt) {
     try {
         // Validate attempt object
         if (!isValidAttempt(attempt)) {
@@ -19,14 +64,36 @@ export function saveAttempt(attempt) {
             return false;
         }
 
-        // Get existing attempts
-        const existingAttempts = getAllAttempts();
+        // Always save to localStorage first (optimistic update)
+        const localSaveSuccess = saveAttemptToLocalStorage(attempt);
         
-        // Add new attempt
-        existingAttempts.push(attempt);
+        if (!localSaveSuccess) {
+            console.error('Failed to save attempt to localStorage');
+            return false;
+        }
+
+        // Clear leaderboard cache so it fetches fresh data
+        clearLeaderboardCache();
+
+        // Try to save to Supabase if user is authenticated
+        await initializeBackend(); // Re-check auth status
         
-        // Save back to localStorage
-        localStorage.setItem(STORAGE_KEYS.MCQ_ATTEMPTS, JSON.stringify(existingAttempts));
+        if (useBackend && currentUserId) {
+            // Fire and forget - don't block on backend save
+            mcqService.saveAttempt(attempt)
+                .then(result => {
+                    if (result.error) {
+                        console.warn('mcq.attempts: Backend save failed, localStorage has the data', result.error);
+                    } else {
+                        console.log('mcq.attempts: Attempt synced to backend');
+                        // Clear cache again after backend save
+                        clearLeaderboardCache();
+                    }
+                })
+                .catch(err => {
+                    console.warn('mcq.attempts: Backend save error', err);
+                });
+        }
         
         return true;
     } catch (error) {
@@ -36,17 +103,42 @@ export function saveAttempt(attempt) {
 }
 
 /**
+ * Save attempt to localStorage only
+ * @param {Object} attempt - The attempt object to save
+ * @returns {boolean} True if saved successfully
+ */
+function saveAttemptToLocalStorage(attempt) {
+    try {
+        const existingAttempts = getAllAttemptsFromLocalStorage();
+        existingAttempts.push(attempt);
+        localStorage.setItem(STORAGE_KEYS.MCQ_ATTEMPTS, JSON.stringify(existingAttempts));
+        return true;
+    } catch (error) {
+        console.error('Failed to save attempt to localStorage:', error);
+        return false;
+    }
+}
+
+/**
  * Get all attempts from localStorage
  * @returns {Array} Array of all attempt objects
  */
-export function getAllAttempts() {
+function getAllAttemptsFromLocalStorage() {
     try {
         const stored = localStorage.getItem(STORAGE_KEYS.MCQ_ATTEMPTS);
         return stored ? JSON.parse(stored) : [];
     } catch (error) {
-        console.error('Failed to read attempts:', error);
+        console.error('Failed to read attempts from localStorage:', error);
         return [];
     }
+}
+
+/**
+ * Get all attempts from localStorage
+ * @returns {Array} Array of all attempt objects
+ */
+export function getAllAttempts() {
+    return getAllAttemptsFromLocalStorage();
 }
 
 /**
@@ -245,4 +337,27 @@ function isValidAttempt(attempt) {
     }
 
     return true;
+}
+
+/**
+ * Reinitialize backend connection (call on auth state change)
+ */
+export async function reinitializeBackend() {
+    await initializeBackend();
+}
+
+/**
+ * Check if backend sync is enabled
+ * @returns {boolean} True if using backend
+ */
+export function isUsingBackend() {
+    return useBackend;
+}
+
+/**
+ * Get current authenticated user ID
+ * @returns {string|null} User ID or null
+ */
+export function getCurrentUserId() {
+    return currentUserId;
 }

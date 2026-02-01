@@ -1544,40 +1544,89 @@
             });
             
             // Form submission
-            loginForm.addEventListener('submit', (e) => {
+            loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = document.getElementById('login-email').value;
                 const password = document.getElementById('login-password').value;
+                const submitBtn = loginForm.querySelector('button[type="submit"]');
                 
-                // Here you would typically make an API call
-                console.log('Login:', { email, password });
+                // Disable button during login
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Logging in...';
                 
-                // Simulate login
-                setTimeout(() => {
-                    alert('Login successful! Redirecting to dashboard...');
+                try {
+                    // Import and use authService
+                    const { login } = await import('../src/services/authService.js');
+                    const result = await login(email, password);
+                    
+                    if (result.error) {
+                        // User-friendly error messages
+                        let errorMsg = result.error.message;
+                        if (errorMsg.includes('Email not confirmed')) {
+                            errorMsg = 'Please check your email and click the confirmation link before logging in.';
+                        } else if (errorMsg.includes('Invalid login credentials')) {
+                            errorMsg = 'Invalid email or password. Please try again.';
+                        }
+                        alert('Login failed: ' + errorMsg);
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Login';
+                        return;
+                    }
+                    
+                    console.log('Login successful:', result.user);
                     authModal.classList.remove('active');
                     document.body.style.overflow = 'auto';
-                }, 1000);
+                    
+                    // Redirect to dashboard
+                    window.location.href = '/public/dashboard.html';
+                } catch (error) {
+                    console.error('Login error:', error);
+                    alert('Login failed: ' + error.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Login';
+                }
             });
             
-            registerForm.addEventListener('submit', (e) => {
+            registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const name = document.getElementById('register-name').value;
                 const email = document.getElementById('register-email').value;
                 const password = document.getElementById('register-password').value;
                 const confirm = document.getElementById('register-confirm').value;
+                const submitBtn = registerForm.querySelector('button[type="submit"]');
                 
                 if (password !== confirm) {
                     alert('Passwords do not match!');
                     return;
                 }
                 
-                console.log('Register:', { name, email, password });
+                // Disable button during registration
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Creating account...';
                 
-                setTimeout(() => {
-                    alert('Registration successful! Please check your email for verification.');
+                try {
+                    // Import and use authService
+                    const { register } = await import('../src/services/authService.js');
+                    const result = await register(email, password);
+                    
+                    if (result.error) {
+                        alert('Registration failed: ' + result.error.message);
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Create Account';
+                        return;
+                    }
+                    
+                    console.log('Registration successful:', result.user);
+                    alert('Registration successful! Please check your email for verification, then login.');
                     switchToLoginTab();
-                }, 1000);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create Account';
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    alert('Registration failed: ' + error.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create Account';
+                }
             });
             
             // Why Us button scroll
@@ -1605,8 +1654,26 @@
             });
         }
         
+        // Check if user is already logged in and redirect to dashboard
+        async function checkAuthAndRedirect() {
+            try {
+                const { getSession } = await import('../src/services/authService.js');
+                const { session } = await getSession();
+                
+                if (session?.user) {
+                    console.log('User already logged in, redirecting to dashboard...');
+                    window.location.href = '/public/dashboard.html';
+                }
+            } catch (error) {
+                console.log('Auth check skipped:', error.message);
+            }
+        }
+        
         // Initialize everything
         document.addEventListener('DOMContentLoaded', () => {
+            // Check auth status first
+            checkAuthAndRedirect();
+            
             createParticles();
             setupScrollAnimations();
             setupNavbar();

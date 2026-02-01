@@ -389,6 +389,35 @@ window.hideProfileCard = function() {
     }
 };
 
+// Logout function
+window.handleLogout = async function() {
+    try {
+        // Import authService dynamically
+        const { logout } = await import('/src/services/authService.js');
+        
+        const result = await logout();
+        
+        if (result.error) {
+            console.error('Logout failed:', result.error);
+            alert('Logout failed: ' + result.error.message);
+            return;
+        }
+        
+        console.log('Logout successful');
+        
+        // Clear any local state if needed
+        localStorage.removeItem('cloud-learning-simulator-state');
+        
+        // Redirect to home/login page
+        window.location.href = '/public/index.html';
+        
+    } catch (error) {
+        console.error('Logout error:', error);
+        // Fallback: just redirect to home
+        window.location.href = '/public/index.html';
+    }
+};
+
 // Profile data management
 window.updateProfileCard = function(profileData) {
     const {
