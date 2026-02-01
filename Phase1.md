@@ -305,3 +305,172 @@ src/
 ---
 
 **Phase 2 Complete** ✅
+
+---
+
+# Phase 3: Core UI Components - Implementation Complete
+
+## Overview
+
+Phase 3 establishes reusable UI components that will be shared across Learn Mode and the Mapping Hub. All components are props-driven, stateless where possible, and contain no hardcoded cloud terminology.
+
+---
+
+## Files Created
+
+**Location:** `src/components/ui/`
+
+### 1. SectionHeader.js
+**Purpose:** Reusable section heading with optional subtitle and action
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | string | ✅ | Section title |
+| `subtitle` | string | ❌ | Optional description |
+| `rightAction` | HTMLElement | ❌ | Optional action element |
+
+---
+
+### 2. ExpandableCard.js
+**Purpose:** Expandable/collapsible container for detailed content
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | string | ✅ | Card header title |
+| `initiallyOpen` | boolean | ❌ | Start expanded (default: false) |
+| `children` | HTMLElement/string | ❌ | Content when expanded |
+
+**Methods:**
+- `toggle()` - Toggle expanded state
+- `open()` / `close()` - Explicit state control
+- `isExpanded()` - Check current state
+
+---
+
+### 3. InfoPanel.js
+**Purpose:** Structured explanation block (cause, effect, fix, etc.)
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `label` | string | ✅ | Always visible label |
+| `content` | string/HTMLElement | ✅ | Text or element content |
+
+---
+
+### 4. TagBadge.js
+**Purpose:** Small visual indicator/label
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | string | ✅ | Badge text |
+| `variant` | string | ❌ | default/warning/success/danger |
+
+**Variants:**
+- `default` - Gray styling
+- `warning` - Yellow/amber styling
+- `success` - Green styling
+- `danger` - Red styling
+
+**Helper:** `createBadgeGroup(items)` - Create multiple badges
+
+---
+
+### 5. LearnLink.js
+**Purpose:** Standardized link to Learn Mode tutorials
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `conceptId` | string | ✅ | Concept ID to link to |
+| `label` | string | ❌ | Link text (defaults to formatted conceptId) |
+| `context` | object | ❌ | Navigation context (from, event, sessionId) |
+
+**Behavior:**
+- Uses `goToLearn()` from navigation helpers
+- Generates correct URL with query params
+- Auto-formats conceptId to Title Case if no label
+
+**Helper:** `createLearnLinkGroup(items, sharedContext)` - Create multiple links
+
+---
+
+### 6. EmptyState.js
+**Purpose:** Fallback state when no content to display
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | string | ✅ | Main title |
+| `description` | string | ❌ | Optional description |
+| `action` | HTMLElement | ❌ | Optional action element |
+
+---
+
+### 7. index.js
+**Purpose:** Barrel export for all components
+
+```javascript
+import { 
+    SectionHeader,
+    ExpandableCard,
+    InfoPanel,
+    TagBadge,
+    LearnLink,
+    EmptyState
+} from './components/ui/index.js';
+```
+
+---
+
+## Component API Pattern
+
+All components follow a consistent API:
+
+```javascript
+// Create component
+const component = new ComponentName(props);
+
+// Render to DOM
+container.appendChild(component.render());
+
+// Update props
+component.update({ newProp: value });
+
+// Get element reference
+const element = component.getElement();
+
+// Cleanup
+component.destroy();
+```
+
+---
+
+## Directory Structure
+
+```
+src/
+└── components/
+    └── ui/
+        ├── index.js           # Barrel export
+        ├── SectionHeader.js   # Section headings
+        ├── ExpandableCard.js  # Collapsible containers
+        ├── InfoPanel.js       # Labeled content blocks
+        ├── TagBadge.js        # Visual indicators
+        ├── LearnLink.js       # Tutorial links
+        └── EmptyState.js      # Empty/fallback states
+```
+
+---
+
+## Validation Checklist
+
+- [x] Components render with dummy props
+- [x] No runtime errors
+- [x] No data coupling (no imports from data files)
+- [x] No duplicated logic
+- [x] No assumptions about specific pages
+- [x] No hardcoded cloud terms
+- [x] Clean prop documentation (JSDoc)
+- [x] Consistent styling with project patterns
+
+---
+
+**Phase 3 Complete** ✅
