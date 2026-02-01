@@ -1,14 +1,18 @@
 /**
  * TutorialDetailPage - Tutorial Detail Page with UI
  * Displays full tutorial content with navigation context and completion
+ * 
+ * Uses 2-column layout:
+ * - Left: Vertical navigation for sections
+ * - Right: Content panel for active section
  */
 
 import { SectionHeader } from '../components/ui/SectionHeader.js';
-import { ExpandableCard } from '../components/ui/ExpandableCard.js';
 import { InfoPanel } from '../components/ui/InfoPanel.js';
 import { TagBadge } from '../components/ui/TagBadge.js';
 import { LearnLink } from '../components/ui/LearnLink.js';
-import { EmptyState } from '../components/ui/EmptyState.js';
+import { VerticalTabNav } from '../components/ui/VerticalTabNav.js';
+import { TutorialContentPanel } from '../components/ui/TutorialContentPanel.js';
 import { learnState } from '../state/learnState.js';
 import { 
     goToLearn, 
@@ -35,6 +39,11 @@ class TutorialDetailPage {
         this.initialized = false;
         this.error = null;
         this.unsubscribe = null;
+        
+        // 2-column layout state
+        this.activeSection = 'overview';
+        this.verticalNav = null;
+        this.contentPanel = null;
     }
 
     /**
@@ -148,7 +157,7 @@ class TutorialDetailPage {
         if (!this.container || !this.tutorial) return;
         
         this.container.innerHTML = '';
-        this.container.className = 'tutorial-detail-page max-w-4xl mx-auto p-6';
+        this.container.className = 'tutorial-detail-page max-w-6xl mx-auto p-6';
         
         // Back navigation
         this.renderBackNavigation();
@@ -156,14 +165,59 @@ class TutorialDetailPage {
         // Header section
         this.renderHeader();
         
-        // Tutorial content sections
-        this.renderContentSections();
+        // 2-column layout for content
+        this.render2ColumnLayout();
         
         // Related game events
         this.renderRelatedGameEvents();
         
         // Footer actions
         this.renderFooterActions();
+    }
+
+    /**
+     * Render 2-column layout with vertical nav and content panel
+     */
+    render2ColumnLayout() {
+        const layoutContainer = document.createElement('div');
+        layoutContainer.className = 'flex flex-col md:flex-row gap-6 mb-8';
+        
+        // Left column: Vertical navigation (fixed width on desktop)
+        const navWrapper = document.createElement('div');
+        navWrapper.className = 'w-full md:w-72 flex-shrink-0';
+        
+        this.verticalNav = new VerticalTabNav({
+            activeSection: this.activeSection,
+            onSelect: (sectionId) => this.handleSectionChange(sectionId)
+        });
+        navWrapper.appendChild(this.verticalNav.render());
+        layoutContainer.appendChild(navWrapper);
+        
+        // Right column: Content panel (flexible width)
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'flex-1 min-w-0';
+        
+        this.contentPanel = new TutorialContentPanel({
+            activeSection: this.activeSection,
+            tutorialData: this.tutorial
+        });
+        contentWrapper.appendChild(this.contentPanel.render());
+        layoutContainer.appendChild(contentWrapper);
+        
+        this.container.appendChild(layoutContainer);
+    }
+
+    /**
+     * Handle section change from vertical nav
+     * @param {string} sectionId - Section identifier
+     */
+    handleSectionChange(sectionId) {
+        this.activeSection = sectionId;
+        
+        // Update the content panel
+        if (this.contentPanel) {
+            this.contentPanel.setActiveSection(sectionId);
+        }
     }
 
     /**
@@ -180,7 +234,7 @@ class TutorialDetailPage {
             backLink.href = this.backNavigation.backUrl;
             backLink.innerHTML = `← Back to Failure Explanation`;
         } else {
-            backLink.href = '/learn';
+            backLink.href = '/public/learn.html';
             backLink.innerHTML = `← Back to Learn Mode`;
         }
         
@@ -227,185 +281,12 @@ class TutorialDetailPage {
         
         const orderSpan = document.createElement('span');
         orderSpan.className = 'text-sm text-gray-500';
-        orderSpan.textContent = `📖 Tutorial ${this.tutorial.order} of ${this.tutorials.length}`;
+        const completedCount = this.tutorials.filter(t => learnState.isCompleted(t.id)).length;
+        orderSpan.textContent = `📖 Tutorial ${this.tutorial.order} of ${this.tutorials.length} • ${completedCount} completed`;
         metaRow.appendChild(orderSpan);
         
         headerSection.appendChild(metaRow);
         this.container.appendChild(headerSection);
-    }
-
-    /**
-     * Render content sections
-     */
-    renderContentSections() {
-        const contentSection = document.createElement('div');
-        contentSection.className = 'tutorial-content space-y-4 mb-6';
-        
-        // Concept Overview
-        const overviewCard = new ExpandableCard({
-            title: '📌 Concept Overview',
-            initiallyOpen: true,
-            children: this.createConceptOverview()
-        });
-        contentSection.appendChild(overviewCard.render());
-        
-        // Why It Matters
-        const whyCard = new ExpandableCard({
-            title: '❓ Why It Matters',
-            initiallyOpen: true,
-            children: this.createWhyItMatters()
-        });
-        contentSection.appendChild(whyCard.render());
-        
-        // Game Connection
-        const gameCard = new ExpandableCard({
-            title: '🎮 Game Connection',
-            initiallyOpen: false,
-            children: this.createGameConnection()
-        });
-        contentSection.appendChild(gameCard.render());
-        
-        // Real-World Mapping
-        const realWorldCard = new ExpandableCard({
-            title: '🌍 Real-World Application',
-            initiallyOpen: false,
-            children: this.createRealWorldMapping()
-        });
-        contentSection.appendChild(realWorldCard.render());
-        
-        // Key Takeaways
-        const takeawaysCard = new ExpandableCard({
-            title: '💡 Key Takeaways',
-            initiallyOpen: true,
-            children: this.createKeyTakeaways()
-        });
-        contentSection.appendChild(takeawaysCard.render());
-        
-        this.container.appendChild(contentSection);
-    }
-
-    /**
-     * Create concept overview content
-     * @returns {HTMLElement} Content element
-     */
-    createConceptOverview() {
-        const content = document.createElement('div');
-        content.className = 'space-y-3';
-        
-        const overviewPanel = new InfoPanel({
-            label: 'What You Will Learn',
-            content: this.tutorial.description
-        });
-        content.appendChild(overviewPanel.render());
-        
-        // Placeholder for detailed content
-        const detailsText = document.createElement('p');
-        detailsText.className = 'text-sm text-gray-400 leading-relaxed';
-        detailsText.textContent = `This tutorial covers the fundamentals of ${this.tutorial.title.toLowerCase()}. You'll understand how this concept applies in cloud architecture and how it affects system reliability.`;
-        content.appendChild(detailsText);
-        
-        return content;
-    }
-
-    /**
-     * Create why it matters content
-     * @returns {HTMLElement} Content element
-     */
-    createWhyItMatters() {
-        const content = document.createElement('div');
-        content.className = 'space-y-3';
-        
-        const whyPanel = new InfoPanel({
-            label: 'Importance',
-            content: `Understanding ${this.tutorial.title.split('&')[0].trim().toLowerCase()} is crucial for building resilient systems. Without this knowledge, systems are more likely to fail under stress.`
-        });
-        content.appendChild(whyPanel.render());
-        
-        const impactPanel = new InfoPanel({
-            label: 'Impact',
-            content: 'Mastering this concept will help you prevent common failure patterns and design more robust architectures.'
-        });
-        content.appendChild(impactPanel.render());
-        
-        return content;
-    }
-
-    /**
-     * Create game connection content
-     * @returns {HTMLElement} Content element
-     */
-    createGameConnection() {
-        const content = document.createElement('div');
-        content.className = 'space-y-3';
-        
-        const connectionPanel = new InfoPanel({
-            label: 'In The Game',
-            content: 'This concept directly affects how your system handles traffic and maintains stability during gameplay.'
-        });
-        content.appendChild(connectionPanel.render());
-        
-        // Related failure nodes
-        if (this.tutorial.relatedFailureNodes?.length > 0) {
-            const nodesPanel = new InfoPanel({
-                label: 'Related Failure Points',
-                content: this.tutorial.relatedFailureNodes.join(', ').replace(/_/g, ' ')
-            });
-            content.appendChild(nodesPanel.render());
-        }
-        
-        return content;
-    }
-
-    /**
-     * Create real-world mapping content
-     * @returns {HTMLElement} Content element
-     */
-    createRealWorldMapping() {
-        const content = document.createElement('div');
-        content.className = 'space-y-3';
-        
-        const realWorldPanel = new InfoPanel({
-            label: 'Real-World Equivalent',
-            content: 'In production cloud environments, these concepts are implemented using services from major cloud providers like AWS, Azure, and GCP.'
-        });
-        content.appendChild(realWorldPanel.render());
-        
-        const examplesPanel = new InfoPanel({
-            label: 'Examples',
-            content: 'Large-scale web applications, e-commerce platforms, and streaming services all rely on these architectural patterns.'
-        });
-        content.appendChild(examplesPanel.render());
-        
-        return content;
-    }
-
-    /**
-     * Create key takeaways content
-     * @returns {HTMLElement} Content element
-     */
-    createKeyTakeaways() {
-        const content = document.createElement('div');
-        
-        const takeawaysList = document.createElement('ul');
-        takeawaysList.className = 'space-y-2 text-sm text-gray-300';
-        
-        const takeaways = [
-            `Understand the core principles of ${this.tutorial.title.split('&')[0].trim().toLowerCase()}`,
-            'Recognize when to apply this concept in your architecture',
-            'Avoid common mistakes related to this pattern',
-            'Connect game events to real-world scenarios'
-        ];
-        
-        takeaways.forEach(takeaway => {
-            const li = document.createElement('li');
-            li.className = 'flex items-start gap-2';
-            li.innerHTML = `<span class="text-green-400">✓</span> <span>${takeaway}</span>`;
-            takeawaysList.appendChild(li);
-        });
-        
-        content.appendChild(takeawaysList);
-        
-        return content;
     }
 
     /**
@@ -464,37 +345,45 @@ class TutorialDetailPage {
         
         // Previous tutorial
         const prevTutorial = this.tutorials.find(t => t.order === this.tutorial.order - 1);
-        if (prevTutorial && learnState.isUnlocked(prevTutorial.id)) {
-            const prevLink = document.createElement('a');
-            prevLink.href = goToLearn(prevTutorial.id);
-            prevLink.className = 'text-sm text-gray-400 hover:text-cyan-400 transition-colors';
-            prevLink.innerHTML = `← Previous: ${prevTutorial.title}`;
-            navRow.appendChild(prevLink);
-        } else {
-            navRow.appendChild(document.createElement('div')); // Spacer
+        const prevContainer = document.createElement('div');
+        if (prevTutorial) {
+            if (learnState.isUnlocked(prevTutorial.id)) {
+                const prevLink = document.createElement('a');
+                prevLink.href = goToLearn(prevTutorial.id);
+                prevLink.className = 'inline-flex items-center gap-1 text-sm text-gray-400 hover:text-cyan-400 transition-colors';
+                prevLink.innerHTML = `← <span class="hidden sm:inline">Previous:</span> ${prevTutorial.title}`;
+                prevContainer.appendChild(prevLink);
+            } else {
+                const lockedPrev = document.createElement('span');
+                lockedPrev.className = 'text-sm text-gray-600 cursor-not-allowed';
+                lockedPrev.innerHTML = `🔒 ${prevTutorial.title}`;
+                prevContainer.appendChild(lockedPrev);
+            }
         }
+        navRow.appendChild(prevContainer);
         
         // Next tutorial
         const nextTutorial = this.tutorials.find(t => t.order === this.tutorial.order + 1);
+        const nextContainer = document.createElement('div');
+        nextContainer.className = 'text-right';
+        
         if (nextTutorial) {
-            const nextContainer = document.createElement('div');
-            nextContainer.className = 'text-right';
-            
             if (learnState.isUnlocked(nextTutorial.id)) {
                 const nextLink = document.createElement('a');
                 nextLink.href = goToLearn(nextTutorial.id);
-                nextLink.className = 'text-sm text-gray-400 hover:text-cyan-400 transition-colors';
-                nextLink.innerHTML = `Next: ${nextTutorial.title} →`;
+                nextLink.className = 'inline-flex items-center gap-1 text-sm text-gray-400 hover:text-cyan-400 transition-colors';
+                nextLink.innerHTML = `<span class="hidden sm:inline">Next:</span> ${nextTutorial.title} →`;
                 nextContainer.appendChild(nextLink);
             } else {
-                const lockedText = document.createElement('span');
-                lockedText.className = 'text-sm text-gray-600';
-                lockedText.innerHTML = `🔒 Next: ${nextTutorial.title}`;
-                nextContainer.appendChild(lockedText);
+                const lockedNext = document.createElement('span');
+                lockedNext.className = 'text-sm text-gray-600 cursor-not-allowed';
+                lockedNext.innerHTML = `🔒 ${nextTutorial.title}`;
+                lockedNext.title = 'Complete this tutorial to unlock';
+                nextContainer.appendChild(lockedNext);
             }
-            
-            navRow.appendChild(nextContainer);
         }
+        
+        navRow.appendChild(nextContainer);
         
         footer.appendChild(navRow);
         
@@ -601,7 +490,7 @@ class TutorialDetailPage {
         const backNav = document.createElement('div');
         backNav.className = 'mb-6';
         const backLink = document.createElement('a');
-        backLink.href = '/learn';
+        backLink.href = '/public/learn.html';
         backLink.className = 'text-sm text-gray-400 hover:text-cyan-400';
         backLink.textContent = '← Back to Learn Mode';
         backNav.appendChild(backLink);
@@ -630,7 +519,7 @@ class TutorialDetailPage {
         const backNav = document.createElement('div');
         backNav.className = 'mb-6';
         const backLink = document.createElement('a');
-        backLink.href = '/learn';
+        backLink.href = '/public/learn.html';
         backLink.className = 'text-sm text-gray-400 hover:text-cyan-400';
         backLink.textContent = '← Back to Learn Mode';
         backNav.appendChild(backLink);
@@ -643,7 +532,7 @@ class TutorialDetailPage {
         
         // Add button to go back
         const actionButton = document.createElement('a');
-        actionButton.href = '/learn';
+        actionButton.href = '/public/learn.html';
         actionButton.className = 'inline-block px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-500 transition-colors';
         actionButton.textContent = 'View All Tutorials';
         
@@ -663,6 +552,12 @@ class TutorialDetailPage {
         if (this.container) {
             this.container.innerHTML = '';
         }
+        
+        // Cleanup component references
+        this.verticalNav = null;
+        this.contentPanel = null;
+        this.activeSection = 'overview';
+        
         this.initialized = false;
     }
 }

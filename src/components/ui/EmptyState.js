@@ -2,6 +2,8 @@
  * EmptyState - Reusable empty/fallback state component
  * Used when there's no data to display
  * 
+ * FEATURE COMPLETE — DO NOT EXTEND IN MVP
+ * 
  * @example
  * const empty = new EmptyState({
  *   title: 'No Results',

@@ -10,6 +10,9 @@ import { InfoPanel } from './InfoPanel.js';
 import { TagBadge, createBadgeGroup, VARIANT_CLASSES } from './TagBadge.js';
 import { LearnLink, createLearnLinkGroup } from './LearnLink.js';
 import { EmptyState } from './EmptyState.js';
+import { VideoCard } from './VideoCard.js';
+import { VerticalTabNav, SECTION_CONFIG } from './VerticalTabNav.js';
+import { TutorialContentPanel } from './TutorialContentPanel.js';
 
 // Named exports
 export {
@@ -21,7 +24,11 @@ export {
     VARIANT_CLASSES,
     LearnLink,
     createLearnLinkGroup,
-    EmptyState
+    EmptyState,
+    VideoCard,
+    VerticalTabNav,
+    SECTION_CONFIG,
+    TutorialContentPanel
 };
 
 // Default export with all components
@@ -31,7 +38,10 @@ const UIComponents = {
     InfoPanel,
     TagBadge,
     LearnLink,
-    EmptyState
+    EmptyState,
+    VideoCard,
+    VerticalTabNav,
+    TutorialContentPanel
 };
 
 export default UIComponents;

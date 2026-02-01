@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Learn Mode | Server Survival</title>
+  <title>Mapping Hub | Server Survival</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -68,6 +68,15 @@
       border: 1px solid rgba(56, 189, 248, 0.1);
       backdrop-filter: blur(10px);
     }
+    
+    /* Line clamp for event cards */
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
   </style>
 </head>
 
@@ -77,33 +86,33 @@
   <div id="navbar-root"></div>
 
   <!-- Main Content Container -->
-  <main id="learn-page-container" class="pt-20 pb-16 min-h-screen">
-    <!-- LearnPage will render here -->
+  <main id="mapping-hub-container" class="pt-20 pb-16 min-h-screen">
+    <!-- MappingHubUI will render here -->
     <div class="flex items-center justify-center h-64">
       <div class="text-center">
         <div class="animate-spin w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-        <p class="text-gray-400">Loading Learn Mode...</p>
+        <p class="text-gray-400">Loading Mapping Hub...</p>
       </div>
     </div>
   </main>
 
-  <!-- Learn Mode Scripts (ES6 Modules) -->
+  <!-- Mapping Hub Scripts (ES6 Modules) -->
   <script type="module">
-    import { LearnPage } from '/src/pages/LearnPage.js';
+    import { MappingHubUI } from '/src/pages/MappingHubUI.js';
 
-    // Initialize Learn Page when DOM is ready
+    // Initialize Mapping Hub when DOM is ready
     document.addEventListener('DOMContentLoaded', async () => {
-      const container = document.getElementById('learn-page-container');
-      const learnPage = new LearnPage();
+      const container = document.getElementById('mapping-hub-container');
+      const mappingHub = new MappingHubUI();
       
       try {
-        await learnPage.initialize(container);
+        await mappingHub.initialize(container);
       } catch (error) {
-        console.error('Failed to initialize Learn Page:', error);
+        console.error('Failed to initialize Mapping Hub:', error);
         container.innerHTML = `
           <div class="max-w-4xl mx-auto p-6 text-center">
             <h1 class="text-2xl font-bold text-red-400 mb-4">Failed to Load</h1>
-            <p class="text-gray-400 mb-4">There was an error loading Learn Mode.</p>
+            <p class="text-gray-400 mb-4">There was an error loading the Mapping Hub.</p>
             <button onclick="location.reload()" class="px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-500">
               Retry
             </button>

@@ -2,6 +2,8 @@
  * LearnLink - Standardized link to Learn Mode tutorials
  * Uses navigation helpers from Phase 2 for URL generation
  * 
+ * FEATURE COMPLETE — DO NOT EXTEND IN MVP
+ * 
  * @example
  * const link = new LearnLink({
  *   conceptId: 'cache',

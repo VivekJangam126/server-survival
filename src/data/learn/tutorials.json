@@ -8,7 +8,27 @@
     "relatedFailureNodes": ["traffic_spike", "server_overload"],
     "unlocks": ["auto_scaling", "rate_limiting"],
     "difficulty": "beginner",
-    "estimatedTimeMinutes": 12
+    "estimatedTimeMinutes": 12,
+    "videos": [
+      {
+        "title": "Load Balancing Explained",
+        "type": "concept",
+        "youtubeId": "sCR3SAVdyCc",
+        "duration": "5:23"
+      },
+      {
+        "title": "AWS Load Balancer Architecture",
+        "type": "architecture",
+        "youtubeId": "qpBLvS1RRdY",
+        "duration": "8:45"
+      },
+      {
+        "title": "Load Balancer Failures & Fixes",
+        "type": "failure",
+        "youtubeId": "K0Ta65OqQkY",
+        "duration": "6:12"
+      }
+    ]
   },
   {
     "id": "auto_scaling",
@@ -19,7 +39,27 @@
     "relatedFailureNodes": ["capacity_exhausted", "server_overload"],
     "unlocks": ["cache", "cost_optimization"],
     "difficulty": "beginner",
-    "estimatedTimeMinutes": 15
+    "estimatedTimeMinutes": 15,
+    "videos": [
+      {
+        "title": "Auto Scaling Fundamentals",
+        "type": "concept",
+        "youtubeId": "4aJfwLCmxbM",
+        "duration": "6:18"
+      },
+      {
+        "title": "Designing Scalable Systems",
+        "type": "architecture",
+        "youtubeId": "xpDnVSmNFX0",
+        "duration": "12:34"
+      },
+      {
+        "title": "Scaling Failures Post-Mortem",
+        "type": "failure",
+        "youtubeId": "BRQ_dSv_mVU",
+        "duration": "7:45"
+      }
+    ]
   },
   {
     "id": "cache",
@@ -30,7 +70,27 @@
     "relatedFailureNodes": ["database_overload", "high_latency"],
     "unlocks": ["queues"],
     "difficulty": "intermediate",
-    "estimatedTimeMinutes": 18
+    "estimatedTimeMinutes": 18,
+    "videos": [
+      {
+        "title": "Caching Strategies Explained",
+        "type": "concept",
+        "youtubeId": "U3RkDLtS7uY",
+        "duration": "8:42"
+      },
+      {
+        "title": "Redis Cache Architecture",
+        "type": "architecture",
+        "youtubeId": "RqThvfNS0Zg",
+        "duration": "10:15"
+      },
+      {
+        "title": "Cache Invalidation Disasters",
+        "type": "failure",
+        "youtubeId": "mPB2CZiAkKM",
+        "duration": "5:58"
+      }
+    ]
   },
   {
     "id": "traffic_spikes",
@@ -41,7 +101,27 @@
     "relatedFailureNodes": ["traffic_spike", "database_overload", "cascade_failure"],
     "unlocks": ["waf", "rate_limiting"],
     "difficulty": "intermediate",
-    "estimatedTimeMinutes": 20
+    "estimatedTimeMinutes": 20,
+    "videos": [
+      {
+        "title": "Handling Traffic Spikes",
+        "type": "concept",
+        "youtubeId": "BKLoFB4WLEY",
+        "duration": "7:30"
+      },
+      {
+        "title": "High Traffic System Design",
+        "type": "architecture",
+        "youtubeId": "hnpzNAPiC0E",
+        "duration": "15:22"
+      },
+      {
+        "title": "Famous Outages Explained",
+        "type": "failure",
+        "youtubeId": "hYJOAP1wOYg",
+        "duration": "9:45"
+      }
+    ]
   },
   {
     "id": "cost_optimization",
@@ -52,6 +132,26 @@
     "relatedFailureNodes": ["over_provisioning", "under_provisioning"],
     "unlocks": [],
     "difficulty": "intermediate",
-    "estimatedTimeMinutes": 15
+    "estimatedTimeMinutes": 15,
+    "videos": [
+      {
+        "title": "Cloud Cost Optimization",
+        "type": "concept",
+        "youtubeId": "Ty2hk4VvhJ0",
+        "duration": "6:50"
+      },
+      {
+        "title": "Cost-Effective Architecture",
+        "type": "architecture",
+        "youtubeId": "1vF08Y1xE1U",
+        "duration": "11:30"
+      },
+      {
+        "title": "Cost Overrun Case Studies",
+        "type": "failure",
+        "youtubeId": "L_qq6Uy0YMQ",
+        "duration": "8:15"
+      }
+    ]
   }
 ]

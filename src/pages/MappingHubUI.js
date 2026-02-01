@@ -4,6 +4,8 @@
  * 
  * Route: /learn/mapping
  * 
+ * FEATURE COMPLETE — DO NOT EXTEND IN MVP
+ * 
  * Sections:
  * 1. Common Game Events
  * 2. Failure Chain Explorer
@@ -207,8 +209,8 @@ class MappingHubUI {
         
         // Page description
         const description = document.createElement('p');
-        description.className = 'text-gray-400 text-sm max-w-2xl';
-        description.textContent = 'Understand why things happened in your game session and learn the real cloud concepts that could have prevented failures.';
+        description.className = 'text-gray-400 text-sm max-w-2xl leading-relaxed';
+        description.textContent = 'Analyze what went wrong in your game. Each event maps to real cloud architecture concepts you can learn.';
         headerContainer.appendChild(description);
         
         this.container.appendChild(headerContainer);

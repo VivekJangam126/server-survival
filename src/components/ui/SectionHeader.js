@@ -2,6 +2,8 @@
  * SectionHeader - Reusable section heading component
  * Used across Learn Mode & Mapping Hub for consistent section titles
  * 
+ * FEATURE COMPLETE — DO NOT EXTEND IN MVP
+ * 
  * @example
  * const header = new SectionHeader({
  *   title: 'My Section',

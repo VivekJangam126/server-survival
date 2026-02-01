@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Learn Mode | Server Survival</title>
+  <title>Tutorial | Server Survival</title>
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -77,36 +77,61 @@
   <div id="navbar-root"></div>
 
   <!-- Main Content Container -->
-  <main id="learn-page-container" class="pt-20 pb-16 min-h-screen">
-    <!-- LearnPage will render here -->
+  <main id="tutorial-page-container" class="pt-20 pb-16 min-h-screen">
+    <!-- TutorialDetailPage will render here -->
     <div class="flex items-center justify-center h-64">
       <div class="text-center">
         <div class="animate-spin w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-        <p class="text-gray-400">Loading Learn Mode...</p>
+        <p class="text-gray-400">Loading Tutorial...</p>
       </div>
     </div>
   </main>
 
-  <!-- Learn Mode Scripts (ES6 Modules) -->
+  <!-- Tutorial Page Scripts (ES6 Modules) -->
   <script type="module">
-    import { LearnPage } from '/src/pages/LearnPage.js';
+    import { TutorialDetailPage } from '/src/pages/TutorialDetailPage.js';
 
-    // Initialize Learn Page when DOM is ready
+    // Get concept ID from URL query parameter
+    function getConceptId() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('id') || urlParams.get('concept');
+    }
+
+    // Initialize Tutorial Page when DOM is ready
     document.addEventListener('DOMContentLoaded', async () => {
-      const container = document.getElementById('learn-page-container');
-      const learnPage = new LearnPage();
+      const container = document.getElementById('tutorial-page-container');
+      const conceptId = getConceptId();
+      
+      if (!conceptId) {
+        container.innerHTML = `
+          <div class="max-w-4xl mx-auto p-6 text-center">
+            <h1 class="text-2xl font-bold text-yellow-400 mb-4">No Tutorial Selected</h1>
+            <p class="text-gray-400 mb-4">Please select a tutorial from the Learn Mode page.</p>
+            <a href="/public/learn.html" class="px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-500 inline-block">
+              Go to Learn Mode
+            </a>
+          </div>
+        `;
+        return;
+      }
+      
+      const tutorialPage = new TutorialDetailPage();
       
       try {
-        await learnPage.initialize(container);
+        await tutorialPage.initialize(container, conceptId);
+        // Update page title
+        if (tutorialPage.tutorial) {
+          document.title = `${tutorialPage.tutorial.title} | Server Survival`;
+        }
       } catch (error) {
-        console.error('Failed to initialize Learn Page:', error);
+        console.error('Failed to initialize Tutorial Page:', error);
         container.innerHTML = `
           <div class="max-w-4xl mx-auto p-6 text-center">
             <h1 class="text-2xl font-bold text-red-400 mb-4">Failed to Load</h1>
-            <p class="text-gray-400 mb-4">There was an error loading Learn Mode.</p>
-            <button onclick="location.reload()" class="px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-500">
-              Retry
-            </button>
+            <p class="text-gray-400 mb-4">There was an error loading this tutorial.</p>
+            <a href="/public/learn.html" class="px-4 py-2 bg-cyan-600 text-white rounded hover:bg-cyan-500 inline-block">
+              Back to Learn Mode
+            </a>
           </div>
         `;
       }

@@ -2,9 +2,12 @@
  * Learn State Management
  * Tracks tutorial completion and unlock status
  * Integrates with existing StateManager pattern
+ * 
+ * FEATURE COMPLETE — DO NOT EXTEND IN MVP
  */
 
 const LEARN_STATE_KEY = 'learn-mode-progress';
+const DEMO_MODE_KEY = 'learn-demo-mode';
 
 /**
  * Default learn state
@@ -206,6 +209,52 @@ class LearnState {
             this.state.unlockedTutorials.push(this.tutorials[0].id);
         }
         
+        this.persist();
+        this.notify();
+    }
+
+    /**
+     * Check if demo mode is enabled via URL param
+     * @returns {boolean} True if demo mode active
+     */
+    isDemoMode() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('demo') === 'true';
+    }
+
+    /**
+     * Unlock all tutorials (for demo mode)
+     */
+    unlockAll() {
+        this.tutorials.forEach(tutorial => {
+            if (!this.state.unlockedTutorials.includes(tutorial.id)) {
+                this.state.unlockedTutorials.push(tutorial.id);
+            }
+        });
+        this.persist();
+        this.notify();
+    }
+
+    /**
+     * Pre-fill demo progress (2 tutorials completed)
+     */
+    setDemoProgress() {
+        this.reset();
+        // Complete first 2 tutorials for demo
+        const demoTutorials = this.tutorials.slice(0, 2);
+        demoTutorials.forEach(t => {
+            if (!this.state.completedTutorials.includes(t.id)) {
+                this.state.completedTutorials.push(t.id);
+            }
+            // Unlock what they would unlock
+            if (t.unlocks) {
+                t.unlocks.forEach(id => this.unlockTutorial(id));
+            }
+        });
+        // Unlock tutorial 3
+        if (this.tutorials[2]) {
+            this.unlockTutorial(this.tutorials[2].id);
+        }
         this.persist();
         this.notify();
     }

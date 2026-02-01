@@ -2,6 +2,8 @@
  * ExpandableCard - Expandable/collapsible container component
  * Used for explanations and detailed content that can be toggled
  * 
+ * FEATURE COMPLETE — DO NOT EXTEND IN MVP
+ * 
  * @example
  * const card = new ExpandableCard({
  *   title: 'Details',

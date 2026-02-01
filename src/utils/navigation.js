@@ -41,15 +41,16 @@ export const NAV_SOURCES = {
  * 
  * @example
  * goToLearn("cache", { from: "mapping", event: "db_failed_first" })
- * // Returns: "/learn/cache?from=mapping&event=db_failed_first"
+ * // Returns: "/public/tutorial.html?id=cache&from=mapping&event=db_failed_first"
  */
 export function goToLearn(conceptId, options = {}) {
     if (!conceptId) {
-        console.warn('goToLearn: conceptId is required');
-        return '/learn';
+        return '/public/learn.html';
     }
     
-    const query = {};
+    const query = {
+        id: conceptId
+    };
     
     if (options.from) {
         query[CONTEXT_KEYS.FROM] = options.from;
@@ -79,7 +80,7 @@ export function goToLearn(conceptId, options = {}) {
  * 
  * @example
  * goToLearnIndex({ from: "game" })
- * // Returns: "/learn?from=game"
+ * // Returns: "/public/learn.html?from=game"
  */
 export function goToLearnIndex(options = {}) {
     const query = {};
@@ -107,7 +108,7 @@ export function goToLearnIndex(options = {}) {
  * 
  * @example
  * goToMapping({ concept: "cache", sessionId: "last" })
- * // Returns: "/learn/mapping?concept=cache&sessionId=last"
+ * // Returns: "/public/mapping-hub.html?concept=cache&sessionId=last"
  */
 export function goToMapping(options = {}) {
     const query = {};
@@ -335,11 +336,11 @@ export function isValidConceptId(conceptId, tutorials) {
 /**
  * Get redirect URL for invalid routes
  * @param {string} reason - Reason for redirect
- * @returns {string} Redirect URL
+ * @returns {string} Redirect URL (static file path: /public/learn.html)
  */
 export function getInvalidRouteRedirect(reason = 'unknown') {
     console.warn(`Navigation: Redirecting due to ${reason}`);
-    return '/learn';
+    return '/public/learn.html';
 }
 
 export default {

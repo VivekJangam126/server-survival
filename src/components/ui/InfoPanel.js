@@ -2,6 +2,8 @@
  * InfoPanel - Structured explanation block component
  * Displays labeled content for cause, effect, fix, etc.
  * 
+ * FEATURE COMPLETE — DO NOT EXTEND IN MVP
+ * 
  * @example
  * const panel = new InfoPanel({
  *   label: 'Root Cause',

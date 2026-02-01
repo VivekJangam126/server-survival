@@ -1,15 +1,20 @@
 /**
  * Routes Configuration for Learn Mode and Mapping Hub
  * Defines all route patterns, parameters, and lazy-loading configuration
+ * 
+ * STATIC FILE MODE: Uses HTML file paths for simple HTTP servers
+ * 
+ * DEPRECATED: Most of this SPA-style logic is unused in multi-entry HTML architecture.
+ * Kept for reference only. Do not extend.
  */
 
 /**
- * Route path constants
+ * Route path constants (static file paths)
  */
 export const ROUTE_PATHS = {
-    LEARN_INDEX: '/learn',
-    LEARN_CONCEPT: '/learn/:conceptId',
-    LEARN_MAPPING: '/learn/mapping'
+    LEARN_INDEX: '/public/learn.html',
+    LEARN_TUTORIAL: '/public/tutorial.html',
+    LEARN_MAPPING: '/public/mapping-hub.html'
 };
 
 /**
@@ -18,37 +23,37 @@ export const ROUTE_PATHS = {
  */
 export const routes = [
     {
-        path: '/learn',
+        path: '/public/learn.html',
         name: 'learn-index',
         title: 'Learn Mode',
-        component: 'LearnIndexPage',
+        component: 'LearnPage',
         lazy: true,
         preserveState: true,
         meta: {
             description: 'Browse all available tutorials and learning content',
             requiresAuth: false
         },
-        queryParams: ['from', 'event', 'sessionId']
+        queryParams: ['from', 'event', 'sessionId', 'demo']
     },
     {
-        path: '/learn/:conceptId',
+        path: '/public/tutorial.html',
         name: 'learn-tutorial',
         title: 'Tutorial',
-        component: 'TutorialPage',
+        component: 'TutorialDetailPage',
         lazy: true,
         preserveState: true,
         meta: {
             description: 'Individual tutorial page for a specific concept',
             requiresAuth: false
         },
-        params: ['conceptId'],
-        queryParams: ['from', 'event', 'sessionId', 'step']
+        // conceptId passed via query param 'id'
+        queryParams: ['id', 'from', 'event', 'sessionId', 'step']
     },
     {
-        path: '/learn/mapping',
+        path: '/public/mapping-hub.html',
         name: 'learn-mapping',
         title: 'Game → Real-World Mapping Hub',
-        component: 'MappingHubPage',
+        component: 'MappingHubUI',
         lazy: true,
         preserveState: true,
         meta: {
@@ -133,7 +138,7 @@ export function matchRoute(path) {
 /**
  * Build a URL from route name and parameters
  * @param {string} routeName - Name of the route
- * @param {Object} params - Route parameters
+ * @param {Object} params - Route parameters (for learn-tutorial, use { conceptId })
  * @param {Object} query - Query parameters
  * @returns {string} Constructed URL
  */
@@ -142,19 +147,15 @@ export function buildUrl(routeName, params = {}, query = {}) {
     
     if (!route) {
         console.warn(`Route '${routeName}' not found`);
-        return '/learn';
+        return ROUTE_PATHS.LEARN_INDEX;
     }
     
-    // Build path with parameters
+    // For static file routing, use the path directly
     let path = route.path;
-    const paramNames = extractRouteParams(route.path);
     
-    for (const paramName of paramNames) {
-        if (params[paramName] === undefined) {
-            console.warn(`Missing required parameter '${paramName}' for route '${routeName}'`);
-            return '/learn';
-        }
-        path = path.replace(`:${paramName}`, encodeURIComponent(params[paramName]));
+    // For learn-tutorial, convert conceptId param to 'id' query param
+    if (routeName === 'learn-tutorial' && params.conceptId) {
+        query.id = params.conceptId;
     }
     
     // Build query string

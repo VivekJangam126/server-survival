@@ -2,6 +2,8 @@
  * TagBadge - Small visual indicator component
  * Used for labels, categories, status indicators
  * 
+ * FEATURE COMPLETE — DO NOT EXTEND IN MVP
+ * 
  * @example
  * const badge = new TagBadge({
  *   text: 'Warning',
