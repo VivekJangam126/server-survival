@@ -1205,9 +1205,12 @@ function retryWithSameArchitecture() {
 }
 
 // Initial setup - show menu, don't start game loop yet
-setTimeout(() => {
-    showMainMenu();
-}, 100);
+// Only show menu automatically if not in modular mode
+if (!window.app) {
+    setTimeout(() => {
+        showMainMenu();
+    }, 100);
+}
 
 function getIntersect(clientX, clientY) {
     mouse.x = (clientX / window.innerWidth) * 2 - 1;
@@ -1406,6 +1409,12 @@ function showMainMenu() {
     document.getElementById("faq-modal").classList.add("hidden");
     document.getElementById("modal").classList.add("hidden");
 
+    // Show navbar when returning to menu
+    const navbar = document.getElementById('game-navbar');
+    if (navbar) {
+        navbar.style.display = 'block';
+    }
+
     // Check for saved game and show/hide load button
     const loadBtn = document.getElementById("load-btn");
     const hasSave = localStorage.getItem("serverSurvivalSave") !== null;
@@ -1454,6 +1463,12 @@ window.togglePanel = (contentId, iconId) => {
 
 window.startGame = () => {
     document.getElementById("main-menu-modal").classList.add("hidden");
+    
+    // Hide navbar during gameplay
+    if (typeof window.hideMainMenu === 'function') {
+        window.hideMainMenu();
+    }
+    
     resetGame();
 
     if (window.tutorial) {
@@ -1465,6 +1480,12 @@ window.startGame = () => {
 
 window.startSandbox = () => {
     document.getElementById("main-menu-modal").classList.add("hidden");
+    
+    // Hide navbar during gameplay
+    if (typeof window.hideMainMenu === 'function') {
+        window.hideMainMenu();
+    }
+    
     resetGame("sandbox");
 };
 

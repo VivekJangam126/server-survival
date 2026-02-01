@@ -1,0 +1,79 @@
+<!-- Shared Navigation Bar Component -->
+<nav id="shared-navbar" class="fixed top-0 left-0 right-0 z-50 bg-gray-800/95 backdrop-blur-md border-b border-gray-700">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <h1 class="text-xl font-bold text-white">Cloud Learning Simulator</h1>
+      </div>
+
+      <!-- Navigation Items -->
+      <div class="hidden md:flex items-center space-x-4">
+        <button onclick="navigateToPage('index.html', 'home')" class="nav-item px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="home">
+          🏠 Home
+        </button>
+        <button onclick="navigateToPage('dashboard.html', 'dashboard')" class="nav-item px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="dashboard">
+          📊 Dashboard
+        </button>
+        <button onclick="navigateToPage('play.html', 'play')" class="nav-item px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="game">
+          🎮 Play
+        </button>
+        <button onclick="navigateToPage('learn.html', 'learn')" class="nav-item px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="learn">
+          📚 Learn
+        </button>
+        <button onclick="navigateToPage('play.html', 'sandbox')" class="nav-item px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="sandbox">
+          🛠️ Sandbox
+        </button>
+        <button onclick="navigateToPage('analysis.html', 'analysis')" class="nav-item px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="analysis">
+          📈 Analysis
+        </button>
+        <button onclick="navigateToPage('profile.html', 'profile')" class="nav-item px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="profile">
+          👤 Profile
+        </button>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button onclick="toggleSharedMobileMenu()" class="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700">
+          <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- User Menu -->
+      <div class="flex items-center">
+        <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-400 to-cyan-300 flex items-center justify-center">
+          <span class="text-white text-sm font-bold">U</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation Menu -->
+  <div id="shared-mobile-menu" class="md:hidden hidden">
+    <div class="px-2 pt-2 pb-3 space-y-1 bg-gray-800">
+      <button onclick="navigateToPage('index.html', 'home')" class="nav-item-mobile block px-3 py-2 rounded-md text-base font-medium w-full text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="home">
+        🏠 Home
+      </button>
+      <button onclick="navigateToPage('dashboard.html', 'dashboard')" class="nav-item-mobile block px-3 py-2 rounded-md text-base font-medium w-full text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="dashboard">
+        📊 Dashboard
+      </button>
+      <button onclick="navigateToPage('play.html', 'play')" class="nav-item-mobile block px-3 py-2 rounded-md text-base font-medium w-full text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="game">
+        🎮 Play
+      </button>
+      <button onclick="navigateToPage('learn.html', 'learn')" class="nav-item-mobile block px-3 py-2 rounded-md text-base font-medium w-full text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="learn">
+        � Learn
+      </button>
+      <button onclick="navigateToPage('play.html', 'sandbox')" class="nav-item-mobile block px-3 py-2 rounded-md text-base font-medium w-full text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="sandbox">
+        �️ Sandbox
+      </button>
+      <button onclick="navigateToPage('analysis.html', 'analysis')" class="nav-item-mobile block px-3 py-2 rounded-md text-base font-medium w-full text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="analysis">
+        📈 Analysis
+      </button>
+      <button onclick="navigateToPage('profile.html', 'profile')" class="nav-item-mobile block px-3 py-2 rounded-md text-base font-medium w-full text-left text-gray-300 hover:text-white hover:bg-gray-700 transition-colors" data-page="profile">
+        👤 Profile
+      </button>
+    </div>
+  </div>
+</nav>

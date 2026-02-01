@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Cloud Learning Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            overflow-y: auto !important;
+            height: 100vh;
+        }
+        html {
+            overflow-y: auto !important;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+        .glass-panel:hover {
+            border-color: rgba(56, 189, 248, 0.25);
+            transform: translateY(-2px);
+        }
+        .quick-action-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+        }
+        #dashboard-content {
+            overflow-y: auto;
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+
+        /* Custom scrollbar for modern browsers */
+        ::-webkit-scrollbar { width: 12px; height: 12px; }
+        ::-webkit-scrollbar-track { background: rgba(15,23,42,0.6); border-radius: 8px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#06b6d4,#7c3aed); border-radius: 8px; border: 3px solid rgba(0,0,0,0); background-clip: padding-box; }
+        /* Firefox */
+        html { scrollbar-width: thin; scrollbar-color: #06b6d4 rgba(15,23,42,0.6); }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Shared navbar will be loaded here by JavaScript -->
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="text-4xl font-bold text-cyan-400 mb-4">Cloud Learning Simulator</div>
+            <div class="text-lg text-gray-400 mb-8">Loading Dashboard...</div>
+            <div class="w-64 h-2 bg-gray-800 rounded-full overflow-hidden">
+                <div id="loading-progress" class="h-full bg-cyan-500 transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <div id="loading-status" class="text-sm text-gray-500 mt-4">Initializing...</div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <main id="dashboard-content" class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Dashboard Header -->
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold text-white mb-2">Cloud Learning Dashboard</h1>
+                <p class="text-gray-400">Welcome back! Continue your cloud computing journey.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div id="stats-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Will be populated by JavaScript -->
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Recent Activities -->
+                <div class="lg:col-span-2">
+                    <div class="glass-panel p-6 rounded-xl">
+                        <h2 class="text-xl font-bold text-white mb-4">Recent Activities</h2>
+                        <div id="recent-activities" class="space-y-4">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="lg:col-span-1">
+                    <div class="glass-panel p-6 rounded-xl">
+                        <h2 class="text-xl font-bold text-white mb-4">Recommended for You</h2>
+                        <div id="recommendations" class="space-y-4">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Progress -->
+            <div class="mb-8">
+                <div class="glass-panel p-6 rounded-xl">
+                    <h2 class="text-xl font-bold text-white mb-4">Learning Progress</h2>
+                    <div id="learning-progress" class="space-y-4">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="mb-8">
+                <div class="glass-panel p-6 rounded-xl">
+                    <h2 class="text-xl font-bold text-white mb-4">Quick Actions</h2>
+                    <div id="quick-actions" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Dashboard Bootstrap Script (module-based) -->
+    <script type="module">
+        import { populateAll, openPlayModal, startSurvival, startSandbox, resumeLast } from './src/Dashboard.js';
+
+        // Expose handlers globally so inline `onclick` attributes still work
+        window.openPlayModal = openPlayModal;
+        window.startSurvival = startSurvival;
+        window.startSandbox = startSandbox;
+        window.resumeLast = resumeLast;
+        window.openLearn = () => alert('Learn mode coming soon!');
+        window.openAchievements = () => alert('Achievements view coming soon!');
+
+        async function loadSharedNavbar() {
+            try {
+                const script = document.createElement('script');
+                script.src = 'shared/navbar.js';
+                document.head.appendChild(script);
+                await new Promise(resolve => { script.onload = resolve; });
+                await new Promise(resolve => setTimeout(resolve, 100));
+                console.log('Shared navbar loaded for dashboard');
+            } catch (err) {
+                console.error('Failed to load shared navbar:', err);
+            }
+        }
+
+        function initializeDashboard() {
+            const progressBar = document.getElementById('loading-progress');
+            const statusText = document.getElementById('loading-status');
+            let progress = 0;
+            const loadingInterval = setInterval(() => {
+                progress += 20;
+                if (progressBar) progressBar.style.width = `${progress}%`;
+
+                if (progress === 20) statusText.textContent = 'Loading dashboard data...';
+                else if (progress === 40) statusText.textContent = 'Setting up components...';
+                else if (progress === 60) statusText.textContent = 'Rendering interface...';
+                else if (progress === 80) statusText.textContent = 'Finalizing...';
+                else if (progress >= 100) {
+                    statusText.textContent = 'Ready!';
+                    clearInterval(loadingInterval);
+                    // Populate UI
+                    populateAll();
+                    setTimeout(() => {
+                        const ls = document.getElementById('loading-screen');
+                        if (ls) ls.classList.add('hidden');
+                    }, 500);
+                }
+            }, 200);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                loadSharedNavbar().then(() => initializeDashboard());
+            });
+        } else {
+            loadSharedNavbar().then(() => initializeDashboard());
+        }
+    </script>
+    <!-- Play Type Modal -->
+    <div id="play-type-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+        <div class="glass-panel p-6 rounded-xl max-w-md w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold">Choose Play Mode</h3>
+                <button onclick="closePlayModal()" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+
+            <div class="grid gap-3">
+                <button onclick="startSurvival()" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg">▶ Start Survival</button>
+                <button onclick="startSandbox()" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-lg">🛠 Start Sandbox</button>
+                <button onclick="resumeLast()" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded-lg">⏯ Resume Last Session</button>
+                <button onclick="closePlayModal()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-lg">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPlayModal(){
+            document.getElementById('play-type-modal').classList.remove('hidden');
+        }
+        function closePlayModal(){
+            document.getElementById('play-type-modal').classList.add('hidden');
+        }
+        function resumeLast(){
+            window.location.href = 'play.html?resume=1';
+        }
+    </script>
+</body>
+</html>
