@@ -1,0 +1,57 @@
+[
+  {
+    "id": "load_balancer",
+    "title": "Load Balancer & Traffic Handling",
+    "order": 1,
+    "description": "Learn how load balancers distribute incoming traffic across multiple servers. Understand health checks, routing algorithms, and how to prevent single points of failure.",
+    "relatedGameEvents": ["traffic_spike_collapse", "system_slow_under_load"],
+    "relatedFailureNodes": ["traffic_spike", "server_overload"],
+    "unlocks": ["auto_scaling", "rate_limiting"],
+    "difficulty": "beginner",
+    "estimatedTimeMinutes": 12
+  },
+  {
+    "id": "auto_scaling",
+    "title": "Auto Scaling & Compute Capacity",
+    "order": 2,
+    "description": "Discover how auto scaling dynamically adjusts compute resources based on demand. Learn scaling policies, cooldown periods, and capacity planning strategies.",
+    "relatedGameEvents": ["traffic_spike_collapse", "costs_increased_fast"],
+    "relatedFailureNodes": ["capacity_exhausted", "server_overload"],
+    "unlocks": ["cache", "cost_optimization"],
+    "difficulty": "beginner",
+    "estimatedTimeMinutes": 15
+  },
+  {
+    "id": "cache",
+    "title": "Cache & Performance Optimization",
+    "order": 3,
+    "description": "Understand caching strategies to reduce database load and improve response times. Learn about cache invalidation, TTL settings, and cache-aside patterns.",
+    "relatedGameEvents": ["db_failed_first", "system_slow_under_load"],
+    "relatedFailureNodes": ["database_overload", "high_latency"],
+    "unlocks": ["queues"],
+    "difficulty": "intermediate",
+    "estimatedTimeMinutes": 18
+  },
+  {
+    "id": "traffic_spikes",
+    "title": "Traffic Spikes, Bottlenecks & Failure Chains",
+    "order": 4,
+    "description": "Learn to identify and handle sudden traffic surges. Understand how bottlenecks form, how failures cascade through systems, and strategies for graceful degradation.",
+    "relatedGameEvents": ["traffic_spike_collapse", "db_failed_first", "system_slow_under_load"],
+    "relatedFailureNodes": ["traffic_spike", "database_overload", "cascade_failure"],
+    "unlocks": ["waf", "rate_limiting"],
+    "difficulty": "intermediate",
+    "estimatedTimeMinutes": 20
+  },
+  {
+    "id": "cost_optimization",
+    "title": "Cost Optimization & Architecture Tradeoffs",
+    "order": 5,
+    "description": "Balance performance with cost efficiency. Learn about right-sizing resources, reserved vs on-demand capacity, and making informed architecture tradeoffs.",
+    "relatedGameEvents": ["costs_increased_fast", "stable_but_low_score"],
+    "relatedFailureNodes": ["over_provisioning", "under_provisioning"],
+    "unlocks": [],
+    "difficulty": "intermediate",
+    "estimatedTimeMinutes": 15
+  }
+]

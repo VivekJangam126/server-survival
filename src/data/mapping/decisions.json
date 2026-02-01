@@ -1,0 +1,51 @@
+[
+  {
+    "decisionId": "lb_without_scaling",
+    "decision": "Added load balancer only",
+    "whyItFailed": "Load balancer distributes traffic but cannot create capacity. Without auto scaling, all servers get overwhelmed equally during traffic spikes.",
+    "correctPattern": ["load_balancer", "auto_scaling"],
+    "learnLinks": ["load_balancer", "auto_scaling"]
+  },
+  {
+    "decisionId": "scaling_without_cache",
+    "decision": "Scaling compute without cache",
+    "whyItFailed": "More servers mean more database queries. Without caching, the database becomes the bottleneck regardless of how many compute instances are running.",
+    "correctPattern": ["auto_scaling", "cache"],
+    "learnLinks": ["auto_scaling", "cache"]
+  },
+  {
+    "decisionId": "no_queue_traffic_spike",
+    "decision": "No queue during traffic spikes",
+    "whyItFailed": "Synchronous processing cannot absorb burst traffic. Without queues, requests pile up and timeout, causing cascading failures.",
+    "correctPattern": ["queues", "auto_scaling", "rate_limiting"],
+    "learnLinks": ["traffic_spikes", "auto_scaling"]
+  },
+  {
+    "decisionId": "no_waf_during_attack",
+    "decision": "No WAF during attack traffic",
+    "whyItFailed": "Malicious traffic consumed resources meant for legitimate users. Without WAF or rate limiting, the system scaled to serve attackers.",
+    "correctPattern": ["waf", "rate_limiting", "load_balancer"],
+    "learnLinks": ["traffic_spikes", "load_balancer"]
+  },
+  {
+    "decisionId": "over_provisioning_early",
+    "decision": "Over-provisioning everything early",
+    "whyItFailed": "Running maximum capacity from the start burns budget before traffic arrives. Costs exceeded revenue, making the architecture unsustainable.",
+    "correctPattern": ["auto_scaling", "cost_optimization"],
+    "learnLinks": ["cost_optimization", "auto_scaling"]
+  },
+  {
+    "decisionId": "cache_without_invalidation",
+    "decision": "Added cache without invalidation strategy",
+    "whyItFailed": "Stale data caused application errors and user complaints. Cache improved speed but broke data consistency.",
+    "correctPattern": ["cache"],
+    "learnLinks": ["cache"]
+  },
+  {
+    "decisionId": "single_region_deployment",
+    "decision": "Deployed in single region only",
+    "whyItFailed": "Regional outage took down entire system. No geographic redundancy meant zero disaster recovery capability.",
+    "correctPattern": ["load_balancer", "failure_chains"],
+    "learnLinks": ["load_balancer", "traffic_spikes"]
+  }
+]
