@@ -1,7 +1,7 @@
 /**
  * AnalysisModeController - Manages the Analysis mode with performance analytics and reports
  */
-import { BaseModeController } from '../core/BaseModeController.js';
+import { BaseModeController } from '/core/BaseModeController.js';
 
 class AnalysisModeController extends BaseModeController {
     constructor(app) {

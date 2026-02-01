@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Survival | Cloud Infrastructure Simulation Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #38bdf8;
+            --primary-dark: #0ea5e9;
+            --primary-light: #7dd3fc;
+            --secondary: #6366f1;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --darker: #020617;
+            --gray-800: #1e293b;
+            --gray-700: #334155;
+            --gray-600: #475569;
+            --gray-400: #94a3b8;
+            --gray-200: #e2e8f0;
+            --white: #ffffff;
+            --glass-bg: rgba(15, 23, 42, 0.85);
+            --glass-border: rgba(56, 189, 248, 0.1);
+        }
+
+        body {
+            background-color: var(--darker);
+            color: var(--gray-200);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(5, 102, 141, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(14, 165, 233, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(56, 189, 248, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        /* Background Grid */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* Glass Effect */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(30, 41, 59, 0.8);
+            color: var(--gray-200);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(56, 189, 248, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(56, 189, 248, 0.1);
+            transform: translateY(-3px);
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1.5rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(2, 6, 23, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--gray-200);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% {
+                text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+            }
+            100% {
+                text-shadow: 0 0 40px rgba(56, 189, 248, 0.8), 0 0 60px rgba(56, 189, 248, 0.4);
+            }
+        }
+
+        .hero-tagline {
+            font-size: 1.5rem;
+            color: var(--gray-400);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .hero-image {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .dashboard-preview {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--dark), var(--gray-800));
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .dashboard-header {
+            height: 60px;
+            background: rgba(15, 23, 42, 0.9);
+            display: flex;
+            align-items: center;
+            padding: 0 2rem;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .dashboard-content {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            height: calc(100% - 60px);
+        }
+
+        .server-nodes {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .node {
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
+            border-color: var(--primary);
+        }
+
+        .node-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .node-label {
+            font-size: 0.9rem;
+            color: var(--gray-400);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stats-panel {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .stat-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        .stat-bar {
+            height: 8px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .stat-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            width: 75%;
+        }
+
+        /* Why Section */
+        .why-section {
+            padding: 8rem 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray-400);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 4rem;
+        }
+
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .why-card {
+            padding: 2.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .why-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .why-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            color: var(--primary);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .why-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .why-card p {
+            color: var(--gray-400);
+            line-height: 1.7;
+        }
+
+        /* Modes Section */
+        .modes-section {
+            padding: 8rem 0;
+            background: rgba(2, 6, 23, 0.5);
+        }
+
+        .modes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .mode-card {
+            padding: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .mode-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .mode-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--white);
+        }
+
+        .mode-card p {
+            color: var(--gray-400);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .mode-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .mode-features li {
+            margin-bottom: 0.8rem;
+            color: var(--gray-300);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mode-features li i {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 8rem 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            padding: 2rem;
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .feature-icon-wrapper {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .feature-content h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+            color: var(--white);
+        }
+
+        .feature-content p {
+            color: var(--gray-400);
+            line-height: 1.6;
+        }
+
+        /* Team Section */
+        .team-section {
+            padding: 8rem 0;
+            background: rgba(2, 6, 23, 0.5);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .team-card {
+            text-align: center;
+            padding: 2.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            font-weight: 700;
+            border: 4px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .team-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .team-role {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .team-bio {
+            color: var(--gray-400);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 5rem 0 2rem;
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-brand p {
+            color: var(--gray-400);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(56, 189, 248, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .social-link:hover {
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-links h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-links a i {
+            font-size: 0.8rem;
+        }
+
+        .newsletter {
+            max-width: 300px;
+        }
+
+        .newsletter h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .newsletter-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .newsletter-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            color: var(--gray-200);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .newsletter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(56, 189, 248, 0.1);
+            text-align: center;
+            color: var(--gray-400);
+            font-size: 0.9rem;
+        }
+
+        /* Auth Modal */
+        .auth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 6, 23, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+
+        .auth-modal.active {
+            display: flex;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 3rem;
+            position: relative;
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .auth-subtitle {
+            color: var(--gray-400);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 2rem;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 10px;
+            padding: 4px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: var(--gray-400);
+        }
+
+        .auth-tab.active {
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--white);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: formSlideIn 0.5s ease;
+        }
+
+        @keyframes formSlideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--gray-300);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 8px;
+            color: var(--gray-200);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--gray-400);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--white);
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .hero-tagline {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .server-nodes {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Grid -->
+    <div class="grid-bg"></div>
+    
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-server logo-icon"></i>
+                SERVER SURVIVAL
+            </a>
+            
+            <div class="nav-links">
+                <a href="#why" class="nav-link">Why Us</a>
+                <a href="#modes" class="nav-link">Modes</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#team" class="nav-link">Team</a>
+                <button class="btn btn-secondary" id="nav-login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1 class="hero-title fade-in" style="padding-top: 130px;">SERVER SURVIVAL</h1>
+            <p class="hero-tagline fade-in">
+                Master cloud infrastructure through immersive simulation. Build, scale, and defend your digital empire.
+            </p>
+            
+            <div class="hero-buttons">
+                <button class="btn btn-primary" id="why-us-btn">
+                    <i class="fas fa-question-circle"></i> Why Server Survival?
+                </button>
+                <button class="btn btn-secondary" id="hero-login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Login / Register
+                </button>
+            </div>
+            
+            <div class="hero-image fade-in">
+                <div class="dashboard-preview glass">
+                    <div class="dashboard-header">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--danger);"></div>
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--warning);"></div>
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: var(--accent);"></div>
+                            <span style="margin-left: 20px; color: var(--gray-400); font-size: 0.9rem;">Cloud Infrastructure Dashboard</span>
+                        </div>
+                    </div>
+                    <div class="dashboard-content">
+                        <div class="server-nodes">
+                            <div class="node">
+                                <i class="fas fa-shield-alt node-icon"></i>
+                                <span class="node-label">Firewall</span>
+                            </div>
+                            <div class="node">
+                                <i class="fas fa-balance-scale node-icon"></i>
+                                <span class="node-label">Load Balancer</span>
+                            </div>
+                            <div class="node">
+                                <i class="fas fa-server node-icon"></i>
+                                <span class="node-label">Compute</span>
+                            </div>
+                            <div class="node">
+                                <i class="fas fa-database node-icon"></i>
+                                <span class="node-label">Database</span>
+                            </div>
+                        </div>
+                        <div class="stats-panel">
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <span>System Health</span>
+                                    <span>75%</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <div class="stat-fill" style="width: 75%;"></div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <span>Security</span>
+                                    <span>92%</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <div class="stat-fill" style="width: 92%;"></div>
+                                </div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">
+                                    <span>Performance</span>
+                                    <span>68%</span>
+                                </div>
+                                <div class="stat-bar">
+                                    <div class="stat-fill" style="width: 68%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Why Section -->
+    <section class="why-section" id="why">
+        <div class="container">
+            <h2 class="section-title fade-in">Why Choose Server Survival?</h2>
+            <p class="section-subtitle fade-in">
+                The ultimate platform for mastering cloud infrastructure through gamified learning
+            </p>
+            
+            <div class="why-grid">
+                <div class="why-card glass fade-in">
+                    <div class="why-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Practical Learning</h3>
+                    <p>Learn real-world cloud concepts through hands-on simulation. Experience the consequences of architectural decisions in a risk-free environment.</p>
+                </div>
+                
+                <div class="why-card glass fade-in">
+                    <div class="why-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Challenges</h3>
+                    <p>Face DDoS attacks, traffic spikes, and infrastructure failures. Develop critical thinking and rapid response skills.</p>
+                </div>
+                
+                <div class="why-card glass fade-in">
+                    <div class="why-icon">
+                        <i class="fas fa-chart-network"></i>
+                    </div>
+                    <h3>Architecture Design</h3>
+                    <p>Design and optimize complete cloud architectures. Experiment with different patterns and find optimal solutions for various scenarios.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Modes Section -->
+    <section class="modes-section" id="modes">
+        <div class="container">
+            <h2 class="section-title fade-in">Choose Your Mode</h2>
+            <p class="section-subtitle fade-in">
+                Server Survival's immersive experience
+            </p>
+            
+            <div class="modes-grid">
+                <div class="mode-card glass fade-in">
+                    <i class="fas fa-skull-crossbones mode-icon"></i>
+                    <h3>Survival Mode</h3>
+                    <p>The ultimate challenge. Build and defend your infrastructure against escalating threats with limited resources.</p>
+                    <ul class="mode-features">
+                        <li><i class="fas fa-check"></i> Progressive difficulty scaling</li>
+                        <li><i class="fas fa-check"></i> Random DDoS attacks</li>
+                        <li><i class="fas fa-check"></i> Resource management</li>
+                        <li><i class="fas fa-check"></i> Global leaderboards</li>
+                    </ul>
+                    <!-- <button class="btn btn-primary">
+                        <i class="fas fa-play"></i> Play Now
+                    </button> -->
+                </div>
+                
+                <div class="mode-card glass fade-in">
+                    <i class="fas fa-flask mode-icon"></i>
+                    <h3>Sandbox Mode</h3>
+                    <p>Experiment freely with unlimited resources. Perfect for testing architectures and learning concepts.</p>
+                    <ul class="mode-features">
+                        <li><i class="fas fa-check"></i> Unlimited budget</li>
+                        <li><i class="fas fa-check"></i> Custom scenarios</li>
+                        <li><i class="fas fa-check"></i> No penalties</li>
+                        <li><i class="fas fa-check"></i> Save & share builds</li>
+                    </ul>
+                    <!-- <button class="btn btn-outline">
+                        <i class="fas fa-rocket"></i> Launch Sandbox
+                    </button> -->
+                </div>
+                
+                <div class="mode-card glass fade-in">
+                    <i class="fas fa-book mode-icon"></i>
+                    <h3>Learn Mode</h3>
+                    <p>Structured learning paths with guided tutorials and progressive challenges.</p>
+                    <ul class="mode-features">
+                        <li><i class="fas fa-check"></i> Step-by-step tutorials</li>
+                        <li><i class="fas fa-check"></i> Concept breakdowns</li>
+                        <li><i class="fas fa-check"></i> Skill assessments</li>
+                        <li><i class="fas fa-check"></i> Certification paths</li>
+                    </ul>
+                    <!-- <button class="btn btn-outline">
+                        <i class="fas fa-graduation-cap"></i> Start Learning
+                    </button> -->
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <h2 class="section-title fade-in">Powerful Features</h2>
+            <p class="section-subtitle fade-in">
+                Everything you need to master cloud infrastructure
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card glass fade-in">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-cloud-upload-alt feature-icon"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Cloud Infrastructure Simulation</h3>
+                        <p>Simulate actual cloud services including Firewalls, Load Balancers, Databases, and CDNs with realistic behavior and interactions.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card glass fade-in">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-shield-alt feature-icon"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Security Challenges</h3>
+                        <p>Defend against DDoS attacks, implement security protocols, and learn to secure distributed systems effectively.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card glass fade-in">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-chart-line feature-icon"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Performance Analytics</h3>
+                        <p>Monitor system performance with real-time metrics, identify bottlenecks, and optimize your infrastructure.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card glass fade-in">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-users feature-icon"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Master Cloud Concepts</h3>
+                        <p>Learn and master fundamental cloud concepts including scalability, reliability, and distributed systems design.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card glass fade-in">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-trophy feature-icon"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Achievement System</h3>
+                        <p>Earn badges and certifications as you master different aspects of cloud infrastructure management.</p>
+                    </div>
+                </div>
+                
+                <div class="feature-card glass fade-in">
+                    <div class="feature-icon-wrapper">
+                        <i class="fas fa-code-branch feature-icon"></i>
+                    </div>
+                    <div class="feature-content">
+                        <h3>Scenario Editor</h3>
+                        <p>Create custom scenarios and challenges to test specific skills or prepare for real-world situations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Team Section -->
+    <section class="team-section" id="team">
+        <div class="container">
+            <h2 class="section-title fade-in">Our Team</h2>
+            <p class="section-subtitle fade-in">
+                Cloud experts and educators building the future of infrastructure learning
+            </p>
+            
+            <div class="team-grid">
+                <div class="team-card glass fade-in">
+                    <div class="team-avatar">S</div>
+                    <h3>Swaraj Mohite</h3>
+                 </div>
+                
+                <div class="team-card glass fade-in">
+                    <div class="team-avatar">V</div>
+                    <h3>Vivek Jangam</h3>
+                 </div>
+                
+                <div class="team-card glass fade-in">
+                    <div class="team-avatar">S</div>
+                    <h3>Snehal Kulkarni</h3>
+                </div>
+                
+                <div class="team-card glass fade-in">
+                    <div class="team-avatar">M</div>
+                    <h3>Mrunali Kumbhar</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-server"></i>
+                        SERVER SURVIVAL
+                    </div>
+                    <p>The ultimate cloud infrastructure simulation platform for developers, architects, and IT professionals.</p>
+                    <!-- <div class="social-links">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                    </div> -->
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features"><i class="fas fa-chevron-right"></i> Features</a></li>
+                        <li><a href="#modes"><i class="fas fa-chevron-right"></i> Modes</a></li>
+                        </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#about"><i class="fas fa-chevron-right"></i> About</a></li>
+                        <li><a href="#team"><i class="fas fa-chevron-right"></i> Team</a></li>
+                    </ul>
+                </div>
+                
+            
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 Server Survival. </p>
+                <p style="margin-top: 10px; font-size: 0.8rem; color: var(--gray-600);">
+                    Server Survival is an educational platform. Not affiliated with AWS, GCP, Azure, or any cloud providers.
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="auth-container glass">
+            <button class="close-modal" id="close-auth-modal">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="auth-header">
+                <h2 class="auth-title">SERVER SURVIVAL</h2>
+                <p class="auth-subtitle">Continue your cloud mastery journey</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="login-tab">Login</div>
+                <div class="auth-tab" id="register-tab">Register</div>
+            </div>
+            
+            <form class="auth-form active" id="login-form">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">Email Address</label>
+                    <input type="email" id="login-email" class="form-input" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-input" placeholder="Enter your password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                
+                <div style="text-align: center; margin-top: 1.5rem; color: var(--gray-400);">
+                    Don't have an account? <a href="#" style="color: var(--primary); cursor: pointer;" id="switch-to-register">Register here</a>
+                </div>
+            </form>
+            
+            <form class="auth-form" id="register-form">
+                <div class="form-group">
+                    <label class="form-label" for="register-name">Full Name</label>
+                    <input type="text" id="register-name" class="form-input" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="register-email">Email Address</label>
+                    <input type="email" id="register-email" class="form-input" placeholder="Enter your email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="register-password">Password</label>
+                    <input type="password" id="register-password" class="form-input" placeholder="Create a password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="register-confirm">Confirm Password</label>
+                    <input type="password" id="register-confirm" class="form-input" placeholder="Confirm your password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+                
+                <div style="text-align: center; margin-top: 1.5rem; color: var(--gray-400);">
+                    Already have an account? <a href="#" style="color: var(--primary); cursor: pointer;" id="switch-to-login">Login here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const count = 80;
+            
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random positioning
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                
+                // Random size and opacity
+                const size = Math.random() * 3 + 1;
+                const opacity = Math.random() * 0.5 + 0.2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.opacity = opacity;
+                
+                // Random animation
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 20;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Scroll animations
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        }
+        
+        // Navbar scroll effect
+        function setupNavbar() {
+            const navbar = document.querySelector('.navbar');
+            
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        }
+        
+        // Smooth scrolling
+        function setupSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    
+                    if (href.startsWith('#') && href.length > 1) {
+                        e.preventDefault();
+                        const targetId = href.substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        
+                        if (targetElement) {
+                            window.scrollTo({
+                                top: targetElement.offsetTop - 80,
+                                behavior: 'smooth'
+                            });
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Auth modal functionality
+        function setupAuthModal() {
+            const authModal = document.getElementById('auth-modal');
+            const loginBtns = [document.getElementById('hero-login-btn'), document.getElementById('nav-login-btn')];
+            const closeBtn = document.getElementById('close-auth-modal');
+            const loginTab = document.getElementById('login-tab');
+            const registerTab = document.getElementById('register-tab');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const switchToRegister = document.getElementById('switch-to-register');
+            const switchToLogin = document.getElementById('switch-to-login');
+            
+            // Open modal
+            loginBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    authModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            });
+            
+            // Close modal
+            closeBtn.addEventListener('click', () => {
+                authModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            });
+            
+            // Close when clicking outside
+            authModal.addEventListener('click', (e) => {
+                if (e.target === authModal) {
+                    authModal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+            
+            // Tab switching
+            function switchToLoginTab() {
+                loginTab.classList.add('active');
+                registerTab.classList.remove('active');
+                loginForm.classList.add('active');
+                registerForm.classList.remove('active');
+            }
+            
+            function switchToRegisterTab() {
+                registerTab.classList.add('active');
+                loginTab.classList.remove('active');
+                registerForm.classList.add('active');
+                loginForm.classList.remove('active');
+            }
+            
+            loginTab.addEventListener('click', switchToLoginTab);
+            registerTab.addEventListener('click', switchToRegisterTab);
+            switchToRegister.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchToRegisterTab();
+            });
+            switchToLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchToLoginTab();
+            });
+            
+            // Form submission
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                // Here you would typically make an API call
+                console.log('Login:', { email, password });
+                
+                // Simulate login
+                setTimeout(() => {
+                    alert('Login successful! Redirecting to dashboard...');
+                    authModal.classList.remove('active');
+                    document.body.style.overflow = 'auto';
+                }, 1000);
+            });
+            
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirm = document.getElementById('register-confirm').value;
+                
+                if (password !== confirm) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+                
+                console.log('Register:', { name, email, password });
+                
+                setTimeout(() => {
+                    alert('Registration successful! Please check your email for verification.');
+                    switchToLoginTab();
+                }, 1000);
+            });
+            
+            // Why Us button scroll
+            document.getElementById('why-us-btn').addEventListener('click', () => {
+                document.getElementById('why').scrollIntoView({ 
+                    behavior: 'smooth' 
+                });
+            });
+        }
+        
+        // Interactive dashboard preview
+        function setupDashboardPreview() {
+            const nodes = document.querySelectorAll('.node');
+            
+            nodes.forEach(node => {
+                node.addEventListener('mouseenter', () => {
+                    node.style.transform = 'translateY(-10px)';
+                    node.style.boxShadow = '0 15px 40px rgba(56, 189, 248, 0.3)';
+                });
+                
+                node.addEventListener('mouseleave', () => {
+                    node.style.transform = 'translateY(-5px)';
+                    node.style.boxShadow = '0 10px 30px rgba(56, 189, 248, 0.2)';
+                });
+            });
+        }
+        
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            setupScrollAnimations();
+            setupNavbar();
+            setupSmoothScrolling();
+            setupAuthModal();
+            setupDashboardPreview();
+            
+            // Add some random animation to stat bars
+            const statFills = document.querySelectorAll('.stat-fill');
+            setInterval(() => {
+                statFills.forEach(fill => {
+                    const currentWidth = parseInt(fill.style.width);
+                    const newWidth = Math.min(100, Math.max(20, currentWidth + (Math.random() * 20 - 10)));
+                    fill.style.width = `${newWidth}%`;
+                    
+                    // Update the percentage text
+                    const label = fill.closest('.stat-item').querySelector('.stat-label span:last-child');
+                    if (label) {
+                        label.textContent = `${Math.round(newWidth)}%`;
+                    }
+                });
+            }, 3000);
+        });
+    </script>
+</body>
+</html>

@@ -2,7 +2,7 @@
  * PlayModeController - Manages Play mode (Survival only - no sandbox)
  * Extracted from main.html to isolate Play flow
  */
-import { BaseModeController } from '../core/BaseModeController.js';
+import { BaseModeController } from '/core/BaseModeController.js';
 
 class PlayModeController extends BaseModeController {
     constructor(app) {

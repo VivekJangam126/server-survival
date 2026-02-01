@@ -1,0 +1,205 @@
+<nav id="shared-navbar"
+  class="fixed top-0 left-0 right-0 z-50 bg-gray-800/95 backdrop-blur-md border-b border-gray-700">
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <div class="flex items-center gap-2 text-white font-bold text-lg">
+        <i class="fa-solid fa-cloud"></i>
+        Server Survival
+      </div>
+
+      <!-- Desktop Nav -->
+      <div class="hidden md:flex items-center space-x-2">
+        <button onclick="navigateToPage('/public/index.html','home')" data-page="home"
+          class="nav-item px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700">
+          <i class="fa-solid fa-house mr-1"></i> Home
+        </button>
+
+        <button onclick="navigateToPage('/public/dashboard.html','dashboard')" data-page="dashboard"
+          class="nav-item px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700">
+          <i class="fa-solid fa-chart-line mr-1"></i> Dashboard
+        </button>
+
+        <button onclick="navigateToPage('/public/play.html','game')" data-page="game"
+          class="nav-item px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700">
+          <i class="fa-solid fa-gamepad mr-1"></i> Play
+        </button>
+
+        <button onclick="navigateToPage('/public/sandbox.html','sandbox')" data-page="sandbox"
+          class="nav-item px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700">
+          <i class="fa-solid fa-toolbox mr-1"></i> Sandbox
+        </button>
+
+        <button onclick="navigateToPage('/public/learn.html','learn')" data-page="learn"
+          class="nav-item px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700">
+          <i class="fa-solid fa-book-open mr-1"></i> Learn
+        </button>
+
+        <button onclick="navigateToPage('/public/challenges.html','challenges')" data-page="challenges"
+          class="nav-item px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700">
+          <i class="fa-solid fa-question-circle mr-1"></i> Challenges
+        </button>
+
+        <button onclick="navigateToPage('/public/leaderboard.html','leaderboard')" data-page="leaderboard"
+          class="nav-item px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700">
+          <i class="fa-solid fa-trophy mr-1"></i> Leaderboard
+        </button>
+
+        <button onclick="navigateToPage('/public/analysis.html','analysis')" data-page="analysis"
+          class="nav-item px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700">
+          <i class="fa-solid fa-chart-bar mr-1"></i> Analysis
+        </button>
+
+        
+      </div>
+
+      <!-- Profile Section -->
+      <div class="hidden md:flex items-center">
+        <div class="relative profile-container">
+          <button 
+            id="profile-button"
+            onclick="navigateToPage('/public/profile.html','profile')" 
+            data-page="profile"
+            class="nav-item flex items-center px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700 transition-all duration-200"
+            onmouseenter="showProfileCard()"
+            onmouseleave="hideProfileCard()"
+          >
+            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-2">
+              <i class="fa-solid fa-user text-white text-sm"></i>
+            </div>
+            <span id="profile-username">Player</span>
+          </button>
+
+          <!-- Profile Hover Card -->
+          <div 
+            id="profile-card" 
+            class="absolute right-0 top-full mt-2 w-64 bg-gray-800 border border-gray-600 rounded-lg shadow-xl opacity-0 invisible transition-all duration-200 z-50"
+            onmouseenter="showProfileCard()"
+            onmouseleave="hideProfileCard()"
+          >
+            <div class="p-4">
+              <!-- Profile Header -->
+              <div class="flex items-center mb-3">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+                  <i class="fa-solid fa-user text-white text-lg"></i>
+                </div>
+                <div>
+                  <h3 class="text-white font-semibold" id="card-username">Player</h3>
+                  <p class="text-gray-400 text-sm" id="card-level">Level 1</p>
+                </div>
+              </div>
+
+              <!-- Quick Stats -->
+              <div class="grid grid-cols-2 gap-3 mb-3">
+                <div class="text-center">
+                  <div class="text-blue-400 font-bold text-lg" id="card-score">0</div>
+                  <div class="text-gray-400 text-xs">Total Score</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-green-400 font-bold text-lg" id="card-challenges">0</div>
+                  <div class="text-gray-400 text-xs">Challenges</div>
+                </div>
+              </div>
+
+              <!-- Progress Bar -->
+              <div class="mb-3">
+                <div class="flex justify-between text-xs text-gray-400 mb-1">
+                  <span>Progress</span>
+                  <span id="card-progress-text">0%</span>
+                </div>
+                <div class="w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    id="card-progress-bar" 
+                    class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300" 
+                    style="width: 0%"
+                  ></div>
+                </div>
+              </div>
+
+              <!-- Action Button -->
+              <button 
+                onclick="navigateToPage('/public/profile.html','profile')" 
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm py-2 px-3 rounded-md transition-colors duration-200"
+              >
+                View Full Profile
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mobile Button & Profile -->
+      <div class="md:hidden flex items-center space-x-2">
+        <!-- Mobile Profile -->
+        <button onclick="navigateToPage('/public/profile.html','profile')" data-page="profile"
+          class="nav-item flex items-center px-2 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700">
+          <div class="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <i class="fa-solid fa-user text-white text-xs"></i>
+          </div>
+        </button>
+        
+        <!-- Mobile Menu Toggle -->
+        <button onclick="toggleSharedMobileMenu()"
+          class="text-gray-300 hover:text-white">
+          <i class="fa-solid fa-bars text-xl"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="shared-mobile-menu" class="hidden md:hidden bg-gray-800 px-3 pb-3">
+    <button onclick="navigateToPage('/public/index.html','home')" data-page="home"
+      class="nav-item-mobile block w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-700">
+      <i class="fa-solid fa-house mr-2"></i> Home
+    </button>
+
+    <button onclick="navigateToPage('/public/dashboard.html','dashboard')" data-page="dashboard"
+      class="nav-item-mobile block w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-700">
+      <i class="fa-solid fa-chart-line mr-2"></i> Dashboard
+    </button>
+
+    <button onclick="navigateToPage('/public/play.html','game')" data-page="game"
+      class="nav-item-mobile block w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-700">
+      <i class="fa-solid fa-gamepad mr-2"></i> Play
+    </button>
+
+    <button onclick="navigateToPage('/public/learn.html','learn')" data-page="learn"
+      class="nav-item-mobile block w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-700">
+      <i class="fa-solid fa-book-open mr-2"></i> Learn
+    </button>
+
+    <button onclick="navigateToPage('/public/challenges.html','challenges')" data-page="challenges"
+      class="nav-item-mobile block w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-700">
+      <i class="fa-solid fa-question-circle mr-2"></i> Challenges
+    </button>
+
+    <button onclick="navigateToPage('/public/leaderboard.html','leaderboard')" data-page="leaderboard"
+      class="nav-item-mobile block w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-700">
+      <i class="fa-solid fa-trophy mr-2"></i> Leaderboard
+    </button>
+
+    <button onclick="navigateToPage('/public/analysis.html','analysis')" data-page="analysis"
+      class="nav-item-mobile block w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-700">
+      <i class="fa-solid fa-chart-bar mr-2"></i> Analysis
+    </button>
+
+    <button onclick="navigateToPage('/public/sandbox.html','sandbox')" data-page="sandbox"
+      class="nav-item-mobile block w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-700">
+      <i class="fa-solid fa-toolbox mr-2"></i> Sandbox
+    </button>
+
+    <!-- Mobile Profile Section -->
+    <div class="border-t border-gray-700 mt-2 pt-2">
+      <button onclick="navigateToPage('/public/profile.html','profile')" data-page="profile"
+        class="nav-item-mobile flex items-center w-full text-left px-3 py-2 text-gray-300 hover:bg-gray-700">
+        <div class="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
+          <i class="fa-solid fa-user text-white text-xs"></i>
+        </div>
+        <span>Profile</span>
+      </button>
+    </div>
+  </div>
+</nav>

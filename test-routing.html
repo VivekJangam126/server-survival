@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routing Test - Server Survival</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/styles/global.css">
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-8 text-center">Server Survival - Routing Test</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">Navigation Pages</h2>
+                <div class="space-y-2">
+                    <a href="/public/index.html" class="block bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded transition">
+                        <i class="fas fa-home mr-2"></i>Home
+                    </a>
+                    <a href="/public/dashboard.html" class="block bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded transition">
+                        <i class="fas fa-chart-line mr-2"></i>Dashboard
+                    </a>
+                    <a href="/public/play.html" class="block bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded transition">
+                        <i class="fas fa-gamepad mr-2"></i>Play
+                    </a>
+                    <a href="/public/sandbox.html" class="block bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded transition">
+                        <i class="fas fa-toolbox mr-2"></i>Sandbox
+                    </a>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">Feature Pages</h2>
+                <div class="space-y-2">
+                    <a href="/public/challenges.html" class="block bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded transition">
+                        <i class="fas fa-question-circle mr-2"></i>Challenges
+                    </a>
+                    <a href="/public/leaderboard.html" class="block bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded transition">
+                        <i class="fas fa-trophy mr-2"></i>Leaderboard
+                    </a>
+                    <a href="/public/analysis.html" class="block bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded transition">
+                        <i class="fas fa-chart-bar mr-2"></i>Analysis
+                    </a>
+                    <a href="/public/learn.html" class="block bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded transition">
+                        <i class="fas fa-book-open mr-2"></i>Learn
+                    </a>
+                </div>
+            </div>
+            
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h2 class="text-xl font-semibold mb-4">User Pages</h2>
+                <div class="space-y-2">
+                    <a href="/public/profile.html" class="block bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded transition">
+                        <i class="fas fa-user mr-2"></i>Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gray-800 p-6 rounded-lg">
+            <h2 class="text-xl font-semibold mb-4">Folder Structure Test</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h3 class="text-lg font-medium mb-2">✅ Moved Successfully:</h3>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• HTML files → /public/</li>
+                        <li>• Challenges → /features/challenges/</li>
+                        <li>• Leaderboard → /features/leaderboard/</li>
+                        <li>• Analysis → /features/analysis/</li>
+                        <li>• Game files → /features/gameplay/</li>
+                        <li>• Navbar → /shared/navbar/</li>
+                        <li>• Styles → /styles/global.css</li>
+                        <li>• Core router → /core/router.js</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium mb-2">🔧 Updated Paths:</h3>
+                    <ul class="text-sm text-gray-300 space-y-1">
+                        <li>• All navbar links use absolute paths</li>
+                        <li>• Script references updated</li>
+                        <li>• Import statements fixed</li>
+                        <li>• CSS references updated</li>
+                        <li>• Router uses absolute URLs</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center">
+            <p class="text-gray-400 mb-4">Test the navigation above to verify routing is working correctly.</p>
+            <button onclick="testFileAccess()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg">
+                Test File Access
+            </button>
+            <div id="test-results" class="mt-4 text-left bg-gray-800 p-4 rounded-lg hidden">
+                <h3 class="text-lg font-semibold mb-2">File Access Test Results:</h3>
+                <div id="test-output" class="text-sm font-mono"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load shared navbar for testing -->
+    <script src="/shared/navbar/navbar.js" defer></script>
+    
+    <script>
+        async function testFileAccess() {
+            const testResults = document.getElementById('test-results');
+            const testOutput = document.getElementById('test-output');
+            testResults.classList.remove('hidden');
+            testOutput.innerHTML = 'Testing file access and navbar...<br>';
+            
+            // Test navbar visibility
+            const navbar = document.getElementById('shared-navbar');
+            if (navbar) {
+                testOutput.innerHTML += '✅ Navbar element found<br>';
+                const isVisible = navbar.offsetHeight > 0;
+                testOutput.innerHTML += `${isVisible ? '✅' : '❌'} Navbar is ${isVisible ? 'visible' : 'hidden'}<br>`;
+            } else {
+                testOutput.innerHTML += '❌ Navbar element not found<br>';
+            }
+            
+            const filesToTest = [
+                '/shared/navbar/navbar.html',
+                '/shared/navbar/navbar.js',
+                '/styles/global.css',
+                '/core/app.controller.js',
+                '/core/EventSystem.js',
+                '/core/router.js',
+                '/core/state.manager.js',
+                '/core/ModeControllerManager.js',
+                '/features/gameplay/game.js',
+                '/features/challenges/ChallengesPageController.js',
+                '/features/leaderboard/LeaderboardPageController.js',
+                '/src/config.js',
+                '/src/state.js',
+                '/assets/sounds/game-background.mp3',
+                '/assets/sounds/menu.mp3',
+                '/assets/sounds/click-5.mp3',
+                '/assets/sounds/click-9.mp3'
+            ];
+            
+            for (const file of filesToTest) {
+                try {
+                    const response = await fetch(file);
+                    const status = response.ok ? '✅' : '❌';
+                    const statusText = response.ok ? 'OK' : `${response.status} ${response.statusText}`;
+                    testOutput.innerHTML += `${status} ${file} - ${statusText}<br>`;
+                } catch (error) {
+                    testOutput.innerHTML += `❌ ${file} - Error: ${error.message}<br>`;
+                }
+            }
+            
+            testOutput.innerHTML += '<br>Test completed!';
+        }
+    </script>
+</body>
+</html>

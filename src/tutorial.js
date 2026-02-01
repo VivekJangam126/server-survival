@@ -336,7 +336,7 @@ class Tutorial {
             this.popup.classList.add('tutorial-step-change');
             setTimeout(() => this.popup.classList.remove('tutorial-step-change'), 300);
             this.showStep();
-            new Audio('assets/sounds/click-5.mp3').play();
+            new Audio('/assets/sounds/click-5.mp3').play();
         }
     }
 
