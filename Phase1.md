@@ -474,3 +474,184 @@ src/
 ---
 
 **Phase 3 Complete** ✅
+
+---
+
+# Phase 4: Learn Mode UI Assembly - Implementation Complete
+
+## Overview
+
+Phase 4 assembles the Learn Mode pages using the data layer (Phase 1), routing (Phase 2), and UI components (Phase 3). Users can now browse, complete, and track progress through tutorials.
+
+---
+
+## Files Created
+
+### 1. Learn State Management
+**File:** `src/state/learnState.js`
+
+Manages tutorial completion and unlock status with localStorage persistence.
+
+**State Structure:**
+```javascript
+{
+  completedTutorials: string[],
+  unlockedTutorials: string[]
+}
+```
+
+**Key Methods:**
+| Method | Description |
+|--------|-------------|
+| `initialize(tutorials)` | Initialize with tutorial data |
+| `isCompleted(tutorialId)` | Check if tutorial is completed |
+| `isUnlocked(tutorialId)` | Check if tutorial is unlocked |
+| `isLocked(tutorialId)` | Check if tutorial is locked |
+| `getTutorialStatus(tutorialId)` | Get status: locked/available/completed |
+| `completeTutorial(tutorialId)` | Mark as complete, unlock next |
+| `getStats()` | Get completion statistics |
+| `subscribe(callback)` | Subscribe to state changes |
+| `reset()` | Reset all progress |
+
+**Locking Rules:**
+- First tutorial is always unlocked
+- Completing a tutorial unlocks tutorials listed in its `unlocks` array
+- Next tutorial in order is also unlocked on completion
+- State persists to localStorage
+
+---
+
+### 2. Learn Index Page
+**File:** `src/pages/LearnPage.js`
+
+Entry point for Learn Mode showing all tutorials.
+
+**Features:**
+- Progress overview with completion percentage
+- Tutorial cards with status badges
+- Lock/unlock visualization
+- Difficulty and time estimates
+- Navigation to tutorial detail
+
+**Tutorial Card States:**
+
+| Status | Badge | Action |
+|--------|-------|--------|
+| Locked | 🔒 Locked | Shows lock reason |
+| Available | ▶ Available | "Start Tutorial" button |
+| Completed | ✅ Completed | "Review Tutorial" button |
+
+**UI Components Used:**
+- `SectionHeader` - Page title
+- `TagBadge` - Status and difficulty badges
+- `EmptyState` - No tutorials fallback
+
+---
+
+### 3. Tutorial Detail Page
+**File:** `src/pages/TutorialDetailPage.js`
+
+Full tutorial view with content sections and completion.
+
+**Content Sections (ExpandableCard):**
+1. 📌 Concept Overview - What you'll learn
+2. ❓ Why It Matters - Importance and impact
+3. 🎮 Game Connection - How it relates to gameplay
+4. 🌍 Real-World Application - Production examples
+5. 💡 Key Takeaways - Summary points
+
+**Features:**
+- Back navigation (context-aware)
+- Tutorial metadata display
+- Related game events links to Mapping Hub
+- Previous/Next tutorial navigation
+- Mark as Completed button
+- Unlocks next tutorials on completion
+- Success message with next steps
+
+**Navigation Context Handling:**
+```
+If ?from=mapping:
+  Show "← Back to Failure Explanation"
+Else:
+  Show "← Back to Learn Mode"
+```
+
+**UI Components Used:**
+- `SectionHeader` - Tutorial title
+- `ExpandableCard` - Content sections
+- `InfoPanel` - Labeled content blocks
+- `TagBadge` - Status and difficulty
+- `EmptyState` - Error/locked states
+
+---
+
+## Edge Cases Handled
+
+| Scenario | Behavior |
+|----------|----------|
+| No tutorials available | EmptyState with message |
+| Tutorial locked | Locked state UI with redirect to index |
+| Invalid conceptId | Error state with back navigation |
+| Data loading failure | Error state with refresh button |
+| Page refresh | Progress preserved via localStorage |
+
+---
+
+## State Flow
+
+```
+User visits /learn
+    ↓
+LearnPage loads tutorials.json
+    ↓
+learnState.initialize(tutorials)
+    ↓
+Renders tutorial list with status from learnState
+    ↓
+User clicks unlocked tutorial
+    ↓
+TutorialDetailPage loads and renders
+    ↓
+User clicks "Mark as Completed"
+    ↓
+learnState.completeTutorial(id)
+    ↓
+Next tutorials unlocked
+    ↓
+State persisted to localStorage
+```
+
+---
+
+## Directory Structure
+
+```
+src/
+├── state/
+│   └── learnState.js          # Learn progress state management
+└── pages/
+    ├── LearnPage.js           # Learn Mode index page
+    ├── LearnIndexPage.js      # Navigation controller (Phase 2)
+    ├── TutorialPage.js        # Navigation controller (Phase 2)
+    └── TutorialDetailPage.js  # Tutorial detail page with UI
+```
+
+---
+
+## Validation Checklist
+
+- [x] /learn renders without errors
+- [x] Tutorials show correct lock status
+- [x] Clicking unlocked tutorial navigates correctly
+- [x] Completion updates state and unlocks next
+- [x] Page refresh preserves progress (localStorage)
+- [x] Back navigation respects context (?from=mapping)
+- [x] No console errors
+- [x] Empty states handled
+- [x] Locked tutorial access handled
+- [x] Invalid conceptId handled
+
+---
+
+**Phase 4 Complete** ✅
