@@ -137,3 +137,171 @@ With the static data layer complete:
 ---
 
 **Phase 1 Complete** ✅
+
+---
+
+# Phase 2: Routing & Navigation - Implementation Complete
+
+## Overview
+
+Phase 2 establishes the routing and navigation layer for Learn Mode and Mapping Hub. All navigation is context-aware, supporting back-navigation and query parameter preservation.
+
+---
+
+## Files Created
+
+### 1. Routes Configuration
+**File:** `src/router/routes.js`
+
+Defines route patterns and utilities:
+
+| Route Path | Name | Description |
+|------------|------|-------------|
+| `/learn` | learn-index | Learn Mode index page |
+| `/learn/:conceptId` | learn-tutorial | Individual tutorial page |
+| `/learn/mapping` | learn-mapping | Game → Real-World Mapping Hub |
+
+**Exported Utilities:**
+- `matchRoute(path)` - Match URL against defined routes
+- `buildUrl(routeName, params, query)` - Construct URLs with parameters
+- `parseQueryString(queryString)` - Parse query parameters
+- `extractRouteParams(pattern)` - Extract parameter names from patterns
+
+---
+
+### 2. Navigation Utilities
+**File:** `src/utils/navigation.js`
+
+**Navigation Functions:**
+
+| Function | Description | Example Output |
+|----------|-------------|----------------|
+| `goToLearn(conceptId, options)` | Navigate to tutorial | `/learn/cache?from=mapping&event=db_failed_first` |
+| `goToLearnIndex(options)` | Navigate to learn index | `/learn?from=game` |
+| `goToMapping(options)` | Navigate to Mapping Hub | `/learn/mapping?concept=cache&sessionId=last` |
+| `getNavigationContext()` | Parse current URL context | `{ from, event, concept, sessionId, ... }` |
+
+**Back Navigation:**
+- `isFromMapping()` - Check if navigated from Mapping Hub
+- `buildBackToMappingUrl()` - Build URL preserving context
+- `getBackNavigationInfo()` - Get back navigation info with label
+
+**Constants:**
+- `CONTEXT_KEYS` - Query parameter key names
+- `NAV_SOURCES` - Navigation source identifiers
+
+---
+
+### 3. Tutorial Page Controller
+**File:** `src/pages/TutorialPage.js`
+
+**Behavior (No UI):**
+- Reads `conceptId` from route params
+- Loads tutorial data from `tutorials.json`
+- Validates `conceptId` (redirects to `/learn` if invalid)
+- Exposes navigation context for UI layer
+- Provides next/previous tutorial navigation
+
+**Key Methods:**
+- `initialize()` - Full page initialization
+- `getState()` - Get current state for UI
+- `shouldShowBackToMapping()` - Back navigation check
+- `getNextTutorial()` / `getPreviousTutorial()` - Sequential navigation
+
+---
+
+### 4. Mapping Hub Page Controller
+**File:** `src/pages/MappingHubPage.js`
+
+**Behavior (No UI):**
+- Reads query params: `concept`, `event`, `sessionId`, `chainId`, `decisionId`
+- Handles `sessionId=last` special value
+- Loads all mapping data files
+- Provides filtering and highlighting logic
+- Supports debug mode
+
+**Key Methods:**
+- `initialize()` - Full page initialization
+- `getFilteredEvents()` - Get events filtered by concept/event
+- `getHighlightedNodes()` - Get nodes to highlight in failure chains
+- `buildLearnLink(conceptId)` - Build learn links with context
+- `getDebugInfo()` - Debug information for development
+
+---
+
+### 5. Learn Index Page Controller
+**File:** `src/pages/LearnIndexPage.js`
+
+**Behavior (No UI):**
+- Loads all tutorials sorted by order
+- Parses navigation context
+- Provides recommended tutorials based on context
+- Builds navigation URLs to tutorials and mapping hub
+
+---
+
+## Query Parameter Schema
+
+| Parameter | Used In | Description |
+|-----------|---------|-------------|
+| `from` | All | Source of navigation (mapping, learn, game) |
+| `event` | Tutorial, Mapping | Related game event ID |
+| `concept` | Mapping | Concept to filter/highlight |
+| `sessionId` | All | Game session ID (or "last") |
+| `chainId` | Mapping | Failure chain to display |
+| `decisionId` | Mapping | Decision to analyze |
+| `step` | Tutorial | Tutorial step position |
+
+---
+
+## Back Navigation Rules
+
+| Condition | Behavior |
+|-----------|----------|
+| `from=mapping` | Show "Back to Mapping Hub" CTA with preserved context |
+| `from=game` | Show "Back to Game" (handled by game) |
+| Default | Show "Back to Learn" |
+
+---
+
+## Edge Case Handling
+
+| Scenario | Behavior |
+|----------|----------|
+| Unknown `conceptId` | Redirect to `/learn` with replace |
+| Missing query params | Use `null` values gracefully |
+| Direct navigation to `/learn/mapping` | Works without filters |
+| Page refresh with query params | Params preserved and parsed |
+| `sessionId=last` | Resolved from localStorage/sessionStorage |
+
+---
+
+## Directory Structure
+
+```
+src/
+├── router/
+│   └── routes.js            # Route definitions and utilities
+├── utils/
+│   └── navigation.js        # Navigation helper functions
+└── pages/
+    ├── LearnIndexPage.js    # Learn index controller
+    ├── TutorialPage.js      # Tutorial page controller
+    └── MappingHubPage.js    # Mapping Hub controller
+```
+
+---
+
+## Validation Checklist
+
+- [x] All routes work on browser refresh
+- [x] Query params persist across navigation
+- [x] Back-navigation preserves context
+- [x] Invalid conceptId redirects cleanly
+- [x] No UI components (navigation layer only)
+- [x] No data mutation
+- [x] No side effects beyond navigation
+
+---
+
+**Phase 2 Complete** ✅
