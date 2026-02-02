@@ -3,3 +3,4 @@
 .vercel
 /game_backup.js
 /main.html
+/node_modules
