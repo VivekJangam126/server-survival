@@ -1,0 +1,70 @@
+[
+  {
+    "chainId": "traffic_spike_cascade",
+    "title": "Traffic Spike → Cascading Failure",
+    "nodes": [
+      {
+        "nodeId": "traffic_spike",
+        "title": "Traffic Spike",
+        "causes": ["viral content", "marketing campaign", "flash sale", "bot attack"],
+        "effects": ["increased request rate", "higher server CPU usage", "connection pool exhaustion"],
+        "preventionConcepts": ["rate_limiting", "waf", "auto_scaling"],
+        "learnLinks": ["load_balancer", "traffic_spikes"]
+      },
+      {
+        "nodeId": "server_overload",
+        "title": "Server Overload",
+        "causes": ["insufficient compute capacity", "no auto scaling configured", "scaling too slow"],
+        "effects": ["increased response times", "request timeouts", "health check failures"],
+        "preventionConcepts": ["auto_scaling", "load_balancer"],
+        "learnLinks": ["auto_scaling", "load_balancer"]
+      },
+      {
+        "nodeId": "database_overload",
+        "title": "Database Overload",
+        "causes": ["no caching layer", "cache misses", "inefficient queries", "connection pool exhaustion"],
+        "effects": ["query timeouts", "transaction failures", "data inconsistency"],
+        "preventionConcepts": ["cache", "queues"],
+        "learnLinks": ["cache", "traffic_spikes"]
+      },
+      {
+        "nodeId": "cascade_failure",
+        "title": "Cascading System Failure",
+        "causes": ["database failures propagate", "retry storms", "circuit breakers not configured"],
+        "effects": ["complete service outage", "data loss risk", "recovery time increases"],
+        "preventionConcepts": ["failure_chains", "queues", "rate_limiting"],
+        "learnLinks": ["traffic_spikes", "cost_optimization"]
+      }
+    ]
+  },
+  {
+    "chainId": "cost_spiral",
+    "title": "Cost Spiral → Budget Exhaustion",
+    "nodes": [
+      {
+        "nodeId": "over_provisioning",
+        "title": "Over-Provisioning Resources",
+        "causes": ["fear of outages", "no capacity planning", "aggressive scaling policies"],
+        "effects": ["high baseline costs", "wasted compute resources", "inefficient utilization"],
+        "preventionConcepts": ["cost_optimization", "auto_scaling"],
+        "learnLinks": ["cost_optimization", "auto_scaling"]
+      },
+      {
+        "nodeId": "scaling_without_limits",
+        "title": "Scaling Without Limits",
+        "causes": ["no maximum instance caps", "no budget alerts", "reactive scaling only"],
+        "effects": ["runaway costs", "budget overruns", "resource sprawl"],
+        "preventionConcepts": ["cost_optimization", "rate_limiting"],
+        "learnLinks": ["cost_optimization", "auto_scaling"]
+      },
+      {
+        "nodeId": "budget_exhaustion",
+        "title": "Budget Exhaustion",
+        "causes": ["uncontrolled spending", "no cost monitoring", "inefficient architecture"],
+        "effects": ["forced service reduction", "emergency shutdowns", "technical debt"],
+        "preventionConcepts": ["cost_optimization"],
+        "learnLinks": ["cost_optimization"]
+      }
+    ]
+  }
+]

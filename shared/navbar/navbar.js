@@ -26,15 +26,27 @@ class SharedNavbar {
             this.removeStaticNavbars();
             
             // Load navbar HTML
-            console.log('Fetching navbar HTML from /shared/navbar/navbar.html');
-            const response = await fetch('/shared/navbar/navbar.html');
+            // Try both paths for dev (original location) and production (assets folder)
+            let navbarHTML;
+            const paths = ['/shared/navbar/navbar.html'];
             
-            if (!response.ok) {
-                throw new Error(`Failed to fetch navbar HTML: ${response.status} ${response.statusText}`);
+            for (const path of paths) {
+                try {
+                    console.log('Fetching navbar HTML from', path);
+                    const response = await fetch(path);
+                    if (response.ok) {
+                        navbarHTML = await response.text();
+                        console.log('Navbar HTML fetched successfully from', path, 'length:', navbarHTML.length);
+                        break;
+                    }
+                } catch (e) {
+                    console.log('Failed to fetch from', path, e.message);
+                }
             }
             
-            const navbarHTML = await response.text();
-            console.log('Navbar HTML fetched successfully, length:', navbarHTML.length);
+            if (!navbarHTML) {
+                throw new Error('Failed to fetch navbar HTML from any path');
+            }
             
             // Create navbar container
             const navbarContainer = document.createElement('div');
@@ -392,8 +404,9 @@ window.hideProfileCard = function() {
 // Logout function
 window.handleLogout = async function() {
     try {
-        // Import authService dynamically
-        const { logout } = await import('/src/services/authService.js');
+        // Import authService dynamically - use string concatenation to avoid static analysis
+        const authPath = '/src/services/' + 'authService.js';
+        const { logout } = await import(/* @vite-ignore */ authPath);
         
         const result = await logout();
         
@@ -584,7 +597,6 @@ if (document.readyState === 'loading') {
     window.sharedNavbar.load();
 }
 
-// Export for module use
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = SharedNavbar;
-}
+// ES Module export for Vite compatibility
+export { SharedNavbar };
+export default SharedNavbar;

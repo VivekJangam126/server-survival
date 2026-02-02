@@ -1556,7 +1556,7 @@
                 
                 try {
                     // Import and use authService
-                    const { login } = await import('../src/services/authService.js');
+                    const { login } = await import(/* @vite-ignore */ '/src/services/authService.js');
                     const result = await login(email, password);
                     
                     if (result.error) {
@@ -1606,7 +1606,7 @@
                 
                 try {
                     // Import and use authService
-                    const { register } = await import('../src/services/authService.js');
+                    const { register } = await import(/* @vite-ignore */ '/src/services/authService.js');
                     const result = await register(email, password);
                     
                     if (result.error) {
@@ -1657,7 +1657,7 @@
         // Check if user is already logged in and redirect to dashboard
         async function checkAuthAndRedirect() {
             try {
-                const { getSession } = await import('../src/services/authService.js');
+                const { getSession } = await import(/* @vite-ignore */ '/src/services/authService.js');
                 const { session } = await getSession();
                 
                 if (session?.user) {
