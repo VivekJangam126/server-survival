@@ -1,0 +1,18 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/index.html", "destination": "/public/index.html" },
+    { "source": "/play.html", "destination": "/public/play.html" },
+    { "source": "/learn.html", "destination": "/public/learn.html" },
+    { "source": "/tutorial.html", "destination": "/public/tutorial.html" },
+    { "source": "/mapping-hub.html", "destination": "/public/mapping-hub.html" },
+    { "source": "/challenges.html", "destination": "/public/challenges.html" },
+    { "source": "/leaderboard.html", "destination": "/public/leaderboard.html" },
+    { "source": "/analysis.html", "destination": "/public/analysis.html" },
+    { "source": "/profile.html", "destination": "/public/profile.html" },
+    { "source": "/dashboard.html", "destination": "/public/dashboard.html" },
+    { "source": "/sandbox.html", "destination": "/public/sandbox.html" }
+  ]
+}
