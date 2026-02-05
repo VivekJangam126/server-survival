@@ -140,12 +140,12 @@ class ServiceManager {
         else if (t1 === "cdn" && t2 === "s3") valid = true;
 
         if (!valid) {
-            new Audio("/assets/sounds/click-9.mp3").play();
+            new Audio("/sounds/click-9.mp3").play();
             console.error(i18n.t('invalid_topology_detailed'));
             return false;
         }
 
-        new Audio("/assets/sounds/click-5.mp3").play();
+        new Audio("/sounds/click-5.mp3").play();
 
         from.connections.push(toId);
         const pts = [from.position.clone(), to.position.clone()];

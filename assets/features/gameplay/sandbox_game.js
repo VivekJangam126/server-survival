@@ -1532,12 +1532,12 @@ function createConnection(fromId, toId) {
     else if (t1 === "cdn" && t2 === "s3") valid = true;
 
     if (!valid) {
-        new Audio("/assets/sounds/click-9.mp3").play();
+        new Audio("/sounds/click-9.mp3").play();
         console.error(i18n.t('invalid_topology_detailed'));
         return;
     }
 
-    new Audio("/assets/sounds/click-5.mp3").play();
+    new Audio("/sounds/click-5.mp3").play();
 
     from.connections.push(toId);
     const pts = [from.position.clone(), to.position.clone()];
@@ -1676,7 +1676,7 @@ window.setTool = (t) => {
         .querySelectorAll(".service-btn")
         .forEach((b) => b.classList.remove("active"));
     document.getElementById(`tool-${t}`).classList.add("active");
-    new Audio("/assets/sounds/click-9.mp3").play();
+    new Audio("/sounds/click-9.mp3").play();
 };
 
 window.setTimeScale = (s) => {
@@ -1872,7 +1872,7 @@ container.addEventListener("mousedown", (e) => {
         if (conn) {
             deleteConnection(conn.from, conn.to);
         } else {
-            new Audio("/assets/sounds/click-9.mp3").play();
+            new Audio("/sounds/click-9.mp3").play();
         }
     } else if (
         STATE.activeTool === "connect" &&
@@ -1883,7 +1883,7 @@ container.addEventListener("mousedown", (e) => {
             STATE.selectedNodeId = null;
         } else {
             STATE.selectedNodeId = i.id;
-            new Audio("/assets/sounds/click-5.mp3").play();
+            new Audio("/sounds/click-5.mp3").play();
         }
     } else if (
         ["waf", "alb", "lambda", "db", "s3", "sqs", "cache", "cdn"].includes(

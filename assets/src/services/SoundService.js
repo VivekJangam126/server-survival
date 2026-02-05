@@ -3,18 +3,18 @@ class SoundService {
         this.ctx = null;
         this.muted = true;
         this.masterGain = null;
-        this.gameBgm = new Audio('/assets/sounds/game-background.mp3');
+        this.gameBgm = new Audio('/sounds/game-background.mp3');
         this.gameBgm.loop = true;
         this.gameBgm.volume = 0.2;
 
-        this.menuBgm = new Audio('/assets/sounds/menu.mp3');
+        this.menuBgm = new Audio('/sounds/menu.mp3');
         this.menuBgm.loop = true;
         this.menuBgm.volume = 0.3;
 
         this.currentBgm = null;
 
-        this.sfxHover = new Audio('/assets/sounds/click-5.mp3');
-        this.sfxClick = new Audio('/assets/sounds/click-9.mp3');
+        this.sfxHover = new Audio('/sounds/click-5.mp3');
+        this.sfxClick = new Audio('/sounds/click-9.mp3');
         this.sfxHover.volume = 0.4;
         this.sfxClick.volume = 0.5;
     }
